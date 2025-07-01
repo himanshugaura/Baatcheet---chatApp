@@ -1,12 +1,11 @@
-import { AppDispatch, RootState, store } from "@/store/store";
+import { AppDispatch } from "@/store/store";
 import toast from "react-hot-toast";
 import { apiConnector } from "../apiConnector";
 import { AuthEndpoints } from "../apis";
 import { clearUser, setUser } from "@/store/features/auth.slice";
-import { useSelector } from "react-redux";
 
 
-export const register = (name: string , userName : string ,email: string , password: string , confirmPassword: string ) => async (dispatch : AppDispatch) => {
+export const register = (name: string , userName : string ,email: string , password: string , confirmPassword: string ) => async () => {
     const toastId = toast.loading("Loading...");
     try {
       const res = await apiConnector("POST", AuthEndpoints.REGISTER_API, {
@@ -35,7 +34,7 @@ export const register = (name: string , userName : string ,email: string , passw
     }
 }
 
-export const login = (email: string, password: string) => async (dispatch: AppDispatch) => {
+export const login = (email: string, password: string) => async () => {
   const toastId = toast.loading("Loading...");
   try {
     const res = await apiConnector("POST", AuthEndpoints.LOGIN_API, {
@@ -43,12 +42,7 @@ export const login = (email: string, password: string) => async (dispatch: AppDi
       password,
     });
     
-    
     if (res.success) {
-      const { user } = res;
-
-      dispatch(setUser(user));
-      
       toast.dismiss(toastId);
       toast.success("Logged in!");
       return true;
@@ -66,7 +60,7 @@ export const login = (email: string, password: string) => async (dispatch: AppDi
 };
 
 
-  export const sendOTP = (email: string) => async (dispatch : AppDispatch) => {
+  export const sendOTP = (email: string) => async () => {
     const toastId = toast.loading("Loading...");
     try {
       const res = await apiConnector("POST", AuthEndpoints.SENDOTP_API, {
@@ -91,7 +85,7 @@ export const login = (email: string, password: string) => async (dispatch: AppDi
     }
 }
 
-export const verifyOTP = (email: string , otp : string) => async (dispatch : AppDispatch) => {
+export const verifyOTP = (email: string , otp : string) => async () => {
   const toastId = toast.loading("Loading...");
   try {
     const res = await apiConnector("POST", AuthEndpoints.VERIFYOTP_API, {
@@ -116,7 +110,7 @@ export const verifyOTP = (email: string , otp : string) => async (dispatch : App
   }
 }
 
-export const logout = ( ) => async (dispatch : AppDispatch) => {
+export const logout = ( ) => async () => {
   try {
     const res = await apiConnector("POST", AuthEndpoints.LOGOUT_API);
     
@@ -131,7 +125,7 @@ export const logout = ( ) => async (dispatch : AppDispatch) => {
   }
 }
 
-export const veriyUserName = (userName : string) => async (dispatch : AppDispatch) => {
+export const veriyUserName = (userName : string) => async () => {
   try {
     const res = await apiConnector("POST", AuthEndpoints.VERIFYUSERNAME_API , {userName});
     
@@ -147,11 +141,9 @@ export const veriyUserName = (userName : string) => async (dispatch : AppDispatc
 }
 
 
-export const verifyEmail = (email : string) => async (dispatch : AppDispatch) => {
+export const verifyEmail = (email : string) => async () => {
   try {
     const res = await apiConnector("POST", AuthEndpoints.VERIFYEMAIL_API , {email});
- 
-    
   
     if (res.success) {
       return true;

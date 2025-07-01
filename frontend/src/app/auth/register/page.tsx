@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 import { useDebounce } from "use-debounce";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import LoginWithGoogle from "@/components/login/LoginWithGoogle";
 import Loader from "@/components/common/Loader";
@@ -122,6 +122,7 @@ export default function RegisterPage() {
           const isAvailable = await dispatch(verifyEmail(debouncedEmail));
           setEmailAvailable(isAvailable);
         } catch (error) {
+          console.error(error);
           setEmailAvailable(null);
         } finally {
           setIsCheckingEmail(false);
@@ -142,6 +143,7 @@ export default function RegisterPage() {
           const isAvailable = await dispatch(veriyUserName(debouncedUsername));
           setUsernameAvailable(isAvailable);
         } catch (error) {
+          console.error(error);
           setUsernameAvailable(null);
         } finally {
           setIsCheckingUsername(false);

@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
 import { MessageSquare, Users, Lock, Bell, PlusCircle, LogOut } from "lucide-react";
 import { Button } from "../ui/button";
 import { Tab } from "@/app/dashboard/layout";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";

@@ -1,33 +1,43 @@
-import axios, { Method } from 'axios';
+import axios, { Method, AxiosRequestHeaders, AxiosResponse, AxiosError } from 'axios';
 
 export const axiosInstance = axios.create({
-  withCredentials: true, 
+  withCredentials: true,
 });
 
-export const apiConnector = async (
+interface ApiResponse<T = any> {
+  success: boolean;
+  message?: string;
+  status?: number;
+  data?: T;
+}
+
+export const apiConnector = async <T = any>(
   method: Method,
   url: string,
-  bodyData?: any,
-  headers?: any,
+  bodyData?: Record<string, any>,
+  headers?: AxiosRequestHeaders,
   params?: Record<string, any>
-) => {
+): Promise<ApiResponse<T>> => {
   try {
-    const response = await axiosInstance({
+    const response: AxiosResponse<ApiResponse<T>> = await axiosInstance({
       method,
       url,
       data: bodyData || null,
       headers,
       params,
     });
+
     return response.data;
-  } catch (error: any) {
-    if (error.response) {
+  } catch (error) {
+    const err = error as AxiosError<ApiResponse>;
+    if (err.response) {
       return {
         success: false,
-        message: error.response.data.message,
-        status: error.response.status,
+        message: err.response.data?.message,
+        status: err.response.status,
       };
     }
+
     return {
       success: false,
       message: "Unexpected error",

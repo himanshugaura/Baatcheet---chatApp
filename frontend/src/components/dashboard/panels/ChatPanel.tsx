@@ -7,6 +7,7 @@ import { AppDispatch, RootState } from "@/store/store";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getAllFolllowedUsers } from "@/lib/api/user";
 import { io, Socket } from "socket.io-client";
+import { User } from "@/types/type";
 
 let socket: Socket | null = null;
 
@@ -72,7 +73,7 @@ export function ChatPanel() {
       {loading ? (
         <p>Loading...</p>
       ) : followedUsers?.length > 0 ? (
-        followedUsers.map((followedUser: any) => (
+        followedUsers.map((followedUser: User) => (
           <div
             key={followedUser._id}
             className="p-3 hover:bg-accent rounded-lg cursor-pointer hover:text-black"
@@ -80,7 +81,7 @@ export function ChatPanel() {
           >
             <div className="flex items-center gap-3">
               <Avatar className="h-9 w-9 text-black">
-                <AvatarImage src={followedUser.avatar} />
+                <AvatarImage src={followedUser.profileImage?.url} />
                 <AvatarFallback>{followedUser.name.charAt(0)}</AvatarFallback>
               </Avatar>
               <div>
@@ -90,7 +91,7 @@ export function ChatPanel() {
                 <p className="text-sm text-muted-foreground capitalize">
                   {onlineStatus[followedUser._id]
                     ? "Online"
-                    : followedUser.status || "Offline"}
+                    : followedUser.isOnline || "Offline"}
                 </p>
               </div>
             </div>

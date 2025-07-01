@@ -21,7 +21,7 @@ export default function NotFound() {
           <h1 className="text-3xl font-bold text-blue-600">404 Not Found</h1>
         
         {/* Error Message */}
-        <p className="text-xl font-bold text-white">Whoops! That page doesn't exist.</p>
+        <p className="text-xl font-bold text-white">Whoops! That page doesn&apos;t exist.</p>
 
       </div>
     </div>

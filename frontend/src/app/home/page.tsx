@@ -4,7 +4,7 @@ import FeatureCard from "@/components/home/FeatureCard";
 import {
   LayoutGrid,
   User,
-  Image,
+  Image as LucideImage,
   MessageSquare,
   Users,
   UserPlus,
@@ -20,24 +20,20 @@ import { RootState } from "@/store/store";
 import { useEffect, useState } from "react";
 import { useAppDispatch } from "@/store/hooks";
 import { getUserData } from "@/lib/api/auth";
+import Image from "next/image";
 
 export default function HomePage() {
-  const [mounted, setMounted] = useState(false);
-    const dispatch = useAppDispatch();
-  
-    // ✅ 1. Only runs ONCE, fetch user
-    useEffect(() => {
-      dispatch(getUserData());
-      setMounted(true);
-    }, [dispatch]); // only runs once
-  
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(getUserData());
+  }, [dispatch]);
 
   const isLoggedIn = useSelector((state: RootState) => state.auth.user);
   return (
     <>
       <Navbar />
 
-      {/* Hero Section - Improved Responsiveness */}
       <section className="relative min-h-[90vh] md:min-h-screen  flex items-center justify-center overflow-hidden pt-16 md:pt-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
@@ -49,19 +45,24 @@ export default function HomePage() {
                 </span>{" "}
                 without limits
               </h1>
-              
+
               <p className="text-base md:text-lg lg:text-xl text-gray-300 max-w-lg mx-auto lg:mx-0">
-                Experience seamless communication with individuals and communities. 
-                Fast, secure, and designed for meaningful connections.
+                Experience seamless communication with individuals and
+                communities. Fast, secure, and designed for meaningful
+                connections.
               </p>
-              
+
               <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center lg:justify-start">
-                <Button active={true} size="md" className="w-full sm:w-auto"
-                onClickLink={`${isLoggedIn ? "/dashboard" : "/auth/login"}`}>
+                <Button
+                  active={true}
+                  size="md"
+                  className="w-full sm:w-auto"
+                  onClickLink={`${isLoggedIn ? "/dashboard" : "/auth/login"}`}
+                >
                   Get Started
                 </Button>
-                <Button 
-                  active={true} 
+                <Button
+                  active={true}
                   variant="secondary"
                   size="md"
                   className="w-full sm:w-auto"
@@ -69,25 +70,30 @@ export default function HomePage() {
                   Learn More
                 </Button>
               </div>
-              
+
               <div className="flex flex-col sm:flex-row items-center gap-3 md:gap-4 pt-2 md:pt-4 justify-center lg:justify-start">
                 <div className="flex -space-x-2">
                   {[1, 2, 3, 4].map((item) => (
-                    <img
+                    <Image
                       key={item}
-                      src={`https://randomuser.me/api/portraits/${item % 2 === 0 ? 'women' : 'men'}/${item}0.jpg`}
+                      src={`https://randomuser.me/api/portraits/${
+                        item % 2 === 0 ? "women" : "men"
+                      }/${item}0.jpg`}
                       alt="User"
-                      className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-white"
+                      width={40}
+                      height={40}
+                      className="rounded-full border-2 border-white w-8 h-8 md:w-10 md:h-10 object-cover"
                     />
                   ))}
                 </div>
                 <p className="text-xs md:text-sm text-gray-400">
-                  Join <span className="text-white font-medium">10,000+</span> active users
+                  Join <span className="text-white font-medium">10,000+</span>{" "}
+                  active users
                 </p>
               </div>
             </div>
-            
-            {/* Video on Right - Responsive Sizing */}
+
+            {/* Video on Right */}
             <div className="w-full lg:w-1/2 flex justify-center relative mt-8 lg:mt-0">
               <div className="relative rounded-xl overflow-hidden w-full max-w-md lg:max-w-lg aspect-video">
                 <video
@@ -102,7 +108,7 @@ export default function HomePage() {
                 </video>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-black/10"></div>
               </div>
-              
+
               {/* Decorative elements - Adjusted for mobile */}
               <div className="absolute -z-10 w-full h-full max-w-lg">
                 <div className="hidden sm:block absolute -top-10 sm:-top-20 -left-10 sm:-left-20 w-20 sm:w-40 h-20 sm:h-40 bg-purple-600/20 rounded-full blur-xl sm:blur-3xl"></div>
@@ -111,7 +117,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-        
+
         {/* Background gradient elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-0 left-0 w-1/3 h-1/3 bg-purple-900/10 rounded-full filter blur-xl sm:blur-3xl"></div>
@@ -127,7 +133,8 @@ export default function HomePage() {
               Powerful Features for Seamless Communication
             </h2>
             <p className="mt-3 md:mt-4 max-w-2xl text-base md:text-lg text-white mx-auto">
-              Everything you need to stay connected with friends, communities, and teams
+              Everything you need to stay connected with friends, communities,
+              and teams
             </p>
           </div>
 
@@ -145,7 +152,7 @@ export default function HomePage() {
               bgColor="bg-blue-500"
             />
             <FeatureCard
-              icon={Image}
+              icon={LucideImage}
               title="Media & Sharing"
               description="Easily share photos, videos, and documents in any conversation. Engage deeply with rich content support and fast upload speeds."
               bgColor="bg-green-500"
@@ -162,7 +169,8 @@ export default function HomePage() {
               How It Works
             </h3>
             <p className="text-base md:text-lg text-white max-w-2xl mx-auto">
-              Get started in just a few simple steps and unlock the power of seamless collaboration
+              Get started in just a few simple steps and unlock the power of
+              seamless collaboration
             </p>
           </div>
 
@@ -189,29 +197,34 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer - Improved Responsiveness */}
+      {/* Footer */}
       <footer className="pt-12 md:pt-16 pb-6 md:pb-8 bg-gray-900 text-white">
         <div className="w-full px-4 flex justify-center items-center flex-col">
           <div className="space-y-4 flex flex-col justify-center items-center text-center">
             <Link href="/" className="flex items-center space-x-2">
-              <img
-                src="/images/logo.png"
-                alt="logo"
-                width={50}
-                height={50}
-              />
+              <Image src="/images/logo.png" alt="logo" width={50} height={50} />
             </Link>
             <p className="max-w-md text-sm md:text-base">
-              Connect, collaborate, and communicate seamlessly with individuals and communities.
+              Connect, collaborate, and communicate seamlessly with individuals
+              and communities.
             </p>
             <div className="flex space-x-4">
-              <Link href="https://github.com" className="hover:text-black transition-colors">
+              <Link
+                href="https://github.com"
+                className="hover:text-black transition-colors"
+              >
                 <Github className="h-5 w-5" />
               </Link>
-              <Link href="https://twitter.com" className="hover:text-black transition-colors">
+              <Link
+                href="https://twitter.com"
+                className="hover:text-black transition-colors"
+              >
                 <Twitter className="h-5 w-5" />
               </Link>
-              <Link href="https://linkedin.com" className="hover:text-black transition-colors">
+              <Link
+                href="https://linkedin.com"
+                className="hover:text-black transition-colors"
+              >
                 <Linkedin className="h-5 w-5" />
               </Link>
             </div>

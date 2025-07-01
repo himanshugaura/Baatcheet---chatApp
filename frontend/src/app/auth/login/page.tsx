@@ -242,7 +242,8 @@ export default function LoginPage() {
               transition={{ delay: 0.4 }}
               className="mt-6 text-center text-sm text-gray-400"
             >
-              Don't have an account?{" "}
+              <p className="inline">Don&apos;t have an account? </p>
+
               <Link
                 href="/register"
                 className="font-medium text-indigo-400 hover:underline transition-colors"
