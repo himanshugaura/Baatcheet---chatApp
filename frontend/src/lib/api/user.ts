@@ -3,13 +3,14 @@ import toast from "react-hot-toast";
 import { apiConnector } from "../apiConnector";
 import { UserEndpoints } from "../apis";
 import { setAllUsers, setFollowedUsers } from "@/store/features/user";
+import { User } from "@/types/type";
 
 export const getAllFolllowedUsers = () => async (dispatch : AppDispatch) => {
     try {
-      const res = await apiConnector("GET", UserEndpoints.GET_FOLLOWED_USERS_API);      
+      const res = await apiConnector<User[]>("GET", UserEndpoints.GET_FOLLOWED_USERS_API);      
   
       // Check for success
-      if (res.success) {
+      if (res.success && res.data) {
         dispatch(setFollowedUsers(res.data));
         return true;
       } else {
@@ -25,9 +26,9 @@ export const getAllFolllowedUsers = () => async (dispatch : AppDispatch) => {
 
 export const getAllUsers = ( ) => async (dispatch : AppDispatch) => {
     try {
-      const res = await apiConnector("GET", UserEndpoints.GET_ALL_USERS_API);      
+      const res = await apiConnector<User[]>("GET", UserEndpoints.GET_ALL_USERS_API);      
   
-      if (res.success) {
+      if (res.success && res.data) {
         dispatch(setAllUsers(res.data));
         return true;
       } else {

@@ -1,39 +1,46 @@
-import axios, { Method, AxiosRequestHeaders, AxiosResponse, AxiosError } from 'axios';
+import axios, {
+  Method,
+  AxiosRequestHeaders,
+  AxiosResponse,
+  AxiosError,
+} from "axios";
 
 export const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-interface ApiResponse<T = any> {
+// Generic API response interface
+export interface ApiResponse<T = unknown> {
   success: boolean;
   message?: string;
   status?: number;
   data?: T;
 }
 
-export const apiConnector = async <T = any>(
+export const apiConnector = async <T = unknown>(
   method: Method,
   url: string,
-  bodyData?: Record<string, any>,
+  bodyData?: Record<string, unknown>,
   headers?: AxiosRequestHeaders,
-  params?: Record<string, any>
+  params?: Record<string, string | number | boolean>
 ): Promise<ApiResponse<T>> => {
   try {
     const response: AxiosResponse<ApiResponse<T>> = await axiosInstance({
       method,
       url,
-      data: bodyData || null,
+      data: bodyData ?? null,
       headers,
       params,
     });
 
     return response.data;
   } catch (error) {
-    const err = error as AxiosError<ApiResponse>;
+    const err = error as AxiosError<ApiResponse<T>>;
+
     if (err.response) {
       return {
         success: false,
-        message: err.response.data?.message,
+        message: err.response.data?.message ?? "Request failed",
         status: err.response.status,
       };
     }

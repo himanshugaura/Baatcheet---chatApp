@@ -1,5 +1,5 @@
 import { LucideIcon } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { useState } from "react";
 
 interface FeatureCardProps {
@@ -19,7 +19,7 @@ export default function FeatureCard({
 }: FeatureCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
-  const cardVariants = {
+  const cardVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
@@ -27,21 +27,27 @@ export default function FeatureCard({
       transition: {
         delay: delay * 0.1,
         duration: 0.5,
-        ease: "easeOut",
+        ease: "easeOut", 
       },
     },
     hover: {
       y: -10,
-      transition: { type: "spring", stiffness: 300 },
+      transition: {
+        type: "spring", 
+        stiffness: 300,
+      },
     },
   };
 
-  const iconVariants = {
+  const iconVariants: Variants = {
     normal: { rotate: 0 },
-    hover: { rotate: 360 },
+    hover: {
+      rotate: 360,
+      transition: { duration: 0.6, type: "spring" },
+    },
   };
 
-  const glowVariants = {
+  const glowVariants: Variants = {
     initial: {
       opacity: 0,
       scale: 0.8,
@@ -59,11 +65,10 @@ export default function FeatureCard({
       initial="hidden"
       animate="visible"
       whileHover="hover"
-      variants={cardVariants}
+      variants={cardVariants} // ✅ no error now
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
     >
-      {/* Glow effect */}
       {isHovered && (
         <motion.div
           className={`absolute inset-0 rounded-xl blur-md ${bgColor.replace("bg-", "bg-opacity-20 ")}`}
@@ -74,7 +79,6 @@ export default function FeatureCard({
       )}
 
       <div className="relative bg-gray-800 border border-gray-700 rounded-xl shadow-lg hover:shadow-xl transition-all p-8 flex flex-col justify-center items-center z-10 overflow-hidden">
-        {/* Animated background elements */}
         <motion.div
           className={`absolute -bottom-8 -right-8 h-32 w-32 rounded-full ${bgColor} opacity-10`}
           animate={{
@@ -93,20 +97,16 @@ export default function FeatureCard({
         >
           <motion.div
             variants={iconVariants}
-            transition={{ duration: 0.6, type: "spring" }}
+            initial="normal"
+            animate={isHovered ? "hover" : "normal"}
           >
             <Icon className="h-6 w-6" />
           </motion.div>
         </motion.div>
 
-        <h3 className="text-xl font-semibold text-white mb-3 text-center">
-          {title}
-        </h3>
-        <p className="text-gray-400 text-justify leading-relaxed">
-          {description}
-        </p>
+        <h3 className="text-xl font-semibold text-white mb-3 text-center">{title}</h3>
+        <p className="text-gray-400 text-justify leading-relaxed">{description}</p>
 
-        {/* Subtle border animation on hover */}
         <motion.div
           className="absolute inset-0 rounded-xl border-2 border-transparent"
           animate={{

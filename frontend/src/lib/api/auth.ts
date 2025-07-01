@@ -3,6 +3,8 @@ import toast from "react-hot-toast";
 import { apiConnector } from "../apiConnector";
 import { AuthEndpoints } from "../apis";
 import { clearUser, setUser } from "@/store/features/auth.slice";
+import { User } from "@/types/type";
+import { AxiosError } from "axios";
 
 
 export const register = (name: string , userName : string ,email: string , password: string , confirmPassword: string ) => async () => {
@@ -157,28 +159,25 @@ export const verifyEmail = (email : string) => async () => {
 }
 
 
-export const getUserData = () => async (dispatch: AppDispatch) => {
+export const getUserData = () => async (dispatch: AppDispatch): Promise<boolean> => {
   try {
-    const res = await apiConnector("GET", AuthEndpoints.GET_USER_DATA_API);
-    console.log(res);
-    
-    if (res.success) {
+    const res = await apiConnector<User>("GET", AuthEndpoints.GET_USER_DATA_API);
+
+    if (res.success && res.data) {
       dispatch(setUser(res.data));
       return true;
     } else {
       dispatch(clearUser());
       return false;
     }
-  } catch (err: any) {
+  } catch (error) {
+    const err = error as AxiosError;
+
     console.error("GetUserData error:", err);
 
     if (err?.response?.status === 401) {
-      
       dispatch(clearUser());
-
       await dispatch(logout());
-
-      return false;
     }
 
     return false;

@@ -1,5 +1,4 @@
-const BASE_URL = "http://localhost:3030/api";
-
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 // AUTH ENDPOINTS
 export const AuthEndpoints = {
   LOGIN_API: BASE_URL + "/auth/login",

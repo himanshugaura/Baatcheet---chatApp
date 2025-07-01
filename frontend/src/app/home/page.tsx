@@ -17,7 +17,7 @@ import Link from "next/link";
 import { Button } from "@/components/common/Button";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAppDispatch } from "@/store/hooks";
 import { getUserData } from "@/lib/api/auth";
 import Image from "next/image";
