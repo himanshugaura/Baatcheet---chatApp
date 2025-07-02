@@ -11,8 +11,8 @@ const initialState: ChatState = {
   users: [], 
 };
 
-export const chatSlice = createSlice({
-  name: "chat",
+export const userSlice = createSlice({
+  name: "user",
   initialState,
   reducers: {
     setFollowedUsers: (state, action: PayloadAction<User[]>) => {
@@ -24,5 +24,5 @@ export const chatSlice = createSlice({
   },
 });
 
-export const { setFollowedUsers, setAllUsers } = chatSlice.actions;
-export default chatSlice.reducer;
+export const { setFollowedUsers, setAllUsers } = userSlice.actions;
+export default userSlice.reducer;

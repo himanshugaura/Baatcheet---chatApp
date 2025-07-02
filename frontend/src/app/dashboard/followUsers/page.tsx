@@ -15,8 +15,8 @@ import { getAllUsers, toggleFollowUser } from "@/lib/api/user";
 export default function UserListPage() {
   const dispatch = useAppDispatch();
 
-  const usersFromStore = useSelector((state: RootState) => state.chat.users);
-  const authUser = useSelector((state: RootState) => state.chat.followedUsers);
+  const usersFromStore = useSelector((state: RootState) => state.user.users);
+  const authUser = useSelector((state: RootState) => state.user.followedUsers);
 
   const [localUsers, setLocalUsers] = useState(usersFromStore);
   const [loadingUserId, setLoadingUserId] = useState<string | null>(null);

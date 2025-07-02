@@ -18,3 +18,14 @@ export interface User {
   createdAt: Date;
   updatedAt: Date;
 }
+
+
+export interface Message{
+  _id: string;
+  senderId: string;
+  receiverId: string;
+  text: string;
+  roomId: string;
+  replyTo: Message | null;
+  timestamp: Date;
+}

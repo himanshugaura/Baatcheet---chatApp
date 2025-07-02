@@ -9,8 +9,10 @@ import { getUserData } from "@/lib/api/auth";
 import Loader from "@/components/common/Loader";
 import { SidebarNav } from "@/components/dashboard/SidebarNav";
 import { SidebarPanel } from "@/components/dashboard/SidebarPanel";
+import { connectSocket, disconnectSocket } from "@/lib/socket";
 
 export type Tab = "chat" | "public" | "private" | "follow" | "create";
+
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [activeTab, setActiveTab] = useState<Tab>("chat");
@@ -32,6 +34,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       router.push("/auth/login");
     }
   }, [isCheckingUser, user, router]);
+
+
+  useEffect(() => {
+    if (!user?._id) return;
+
+    connectSocket(user._id);
+
+    return () => {
+      disconnectSocket();
+    };
+  }, [user?._id]);
 
    if (isCheckingUser) {
     return (

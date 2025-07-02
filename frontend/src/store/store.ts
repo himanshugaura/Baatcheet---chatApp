@@ -1,12 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { ThunkAction, Action } from "@reduxjs/toolkit";
 import authReducer from "./features/auth.slice";
-import chatReducer from "./features/user";
+import userReducer from "./features/user.slice";
+import chatReducer from "./features/chat.slice";
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    chat: chatReducer,
+    user: userReducer,
+    chat: chatReducer
   },
   devTools: process.env.NODE_ENV !== "production",
 });

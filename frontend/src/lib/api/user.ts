@@ -2,7 +2,7 @@ import { AppDispatch } from "@/store/store";
 import toast from "react-hot-toast";
 import { apiConnector } from "../apiConnector";
 import { UserEndpoints } from "../apis";
-import { setAllUsers, setFollowedUsers } from "@/store/features/user";
+import { setAllUsers, setFollowedUsers } from "@/store/features/user.slice";
 import { User } from "@/types/type";
 
 export const getAllFolllowedUsers = () => async (dispatch : AppDispatch) => {
