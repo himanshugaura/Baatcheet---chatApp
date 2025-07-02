@@ -12,20 +12,35 @@ export const getMessages = asyncErrorHandler(
         { senderId, receiverId },
         { senderId: receiverId, receiverId: senderId },
       ],
-    }).sort({ timestamp: 1 });
+    }).sort({ timestamp: 1 }) .populate("replyTo");
 
-    res.json(messages);
+    res.json({
+        success: true,
+        message: "Successfully fetched the messages.",
+        data: messages
+      });
   }
 );
 
-// POST a new message
 export const sendMessage = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { senderId, receiverId, text, roomId } = req.body;
+    const { senderId, receiverId, text, roomId, replyTo } = req.body;
 
-    const newMessage = new MessageModel({ senderId, receiverId, text, roomId });
+    const newMessage = new MessageModel({
+      senderId,
+      receiverId,
+      text,
+      roomId,
+      replyTo: replyTo || null,
+    });
+
     await newMessage.save();
 
-    res.status(201).json(newMessage);
+    res.status(201).json({
+        success: true,
+        message: "message sent",
+        data : newMessage
+      });
   }
 );
+

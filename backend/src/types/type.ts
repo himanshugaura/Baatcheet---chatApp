@@ -55,5 +55,6 @@ export interface IMessage extends Document {
   receiverId: Types.ObjectId;
   text: string;
   roomId: string;
+  replyTo: Types.ObjectId;
   timestamp: Date;
 }

@@ -10,6 +10,6 @@ export const getOnlineStatus = asyncErrorHandler(
     const isOnline = await pubClient.sIsMember('online_users', userId);
 
     // Respond with the online status
-    res.json({ isOnline: Boolean(isOnline) });
+    res.json({ data: Boolean(isOnline) });
   }
 );
