@@ -1,8 +1,6 @@
-// lib/socket.ts
 import { io, Socket } from "socket.io-client";
 
 export let socket: Socket | null = null;
-
 export const connectSocket = (userId: string) => {
   if (!socket) {
     socket = io("http://localhost:3030");
@@ -16,3 +14,9 @@ export const disconnectSocket = () => {
     socket = null;
   }
 };
+
+
+export function getSocket(): Socket {
+  if (!socket) throw new Error("Socket not connected");
+  return socket;
+}

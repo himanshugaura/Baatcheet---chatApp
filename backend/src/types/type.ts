@@ -22,6 +22,12 @@ export interface IUser extends Document {
   generateJWT(): string;
 }
 
+export interface IUserLean {
+  _id: Types.ObjectId;
+  following: Types.ObjectId[];
+}
+
+
 export interface DecodedUser {
   _id: string;
   email: string;

@@ -1,5 +1,5 @@
 
-import { setMessages, setReceiverOnline } from "@/store/features/chat.slice";
+import { addMessage, setMessages, setReceiverOnline } from "@/store/features/chat.slice";
 import { AppDispatch } from "@/store/store";
 import { ChatEndpoints } from "../apis";
 import { apiConnector } from "../apiConnector";
@@ -45,8 +45,9 @@ export const sendMessage = (senderId: string , receiverId: string , text : strin
     const res = await apiConnector<Message>("POST", ChatEndpoints.SEND_MESSAGE_API , {senderId, receiverId, text, roomId, replyTo});
     console.log("send message" , res);
     
-    if (res.success) {
+    if (res.success && res.data) {
       dispatch(fetchMessages(senderId , receiverId));
+      dispatch(addMessage(res.data))
       return true;
     } else {
       return false;
