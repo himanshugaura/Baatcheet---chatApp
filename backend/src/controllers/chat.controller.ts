@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 import MessageModel from '../models/message.model.js';
 import asyncErrorHandler from '../utils/asyncErrorHandler';
 
-// GET messages between two users
 export const getMessages = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { senderId, receiverId } = req.params;
@@ -36,11 +35,15 @@ export const sendMessage = asyncErrorHandler(
 
     await newMessage.save();
 
+     const io = req.app.get("io"); 
+    io.to(receiverId).emit("receive-message", newMessage);
+    io.to(senderId).emit("receive-message", newMessage);
+
+
     res.status(201).json({
-        success: true,
-        message: "message sent",
-        data : newMessage
-      });
+      success: true,
+      message: "message sent",
+      data: newMessage
+    });
   }
 );
-

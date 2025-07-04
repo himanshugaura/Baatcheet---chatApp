@@ -60,7 +60,10 @@ app.use(passport.session());
   });
 
   setupSocket(io);
+  app.set("io", io);
+
   
+
   app.use("/api/auth", authRouter);
   app.use("/api/user", userRouter);
   app.use("/api/chat", chatRouter);
