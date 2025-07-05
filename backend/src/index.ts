@@ -62,7 +62,11 @@ app.use(passport.session());
   setupSocket(io);
   app.set("io", io);
 
-  
+  await pubClient.del("online_users");
+const keys = await pubClient.keys("online_user_count:*");
+if (keys.length) await pubClient.del(keys);
+
+console.log("✅ Redis online user keys cleared")
 
   app.use("/api/auth", authRouter);
   app.use("/api/user", userRouter);

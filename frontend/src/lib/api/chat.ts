@@ -43,8 +43,7 @@ export const fetchOnlineStatus = (receiverId: string) => async (dispatch: AppDis
 export const sendMessage = (senderId: string , receiverId: string , text : string , roomId : string , replyTo : string | null) => async (dispatch: AppDispatch): Promise<boolean> => {
   try {
     const res = await apiConnector<Message>("POST", ChatEndpoints.SEND_MESSAGE_API , {senderId, receiverId, text, roomId, replyTo});
-    console.log("send message" , res);
-    
+      
     if (res.success && res.data) {
       dispatch(fetchMessages(senderId , receiverId));
       dispatch(addMessage(res.data))

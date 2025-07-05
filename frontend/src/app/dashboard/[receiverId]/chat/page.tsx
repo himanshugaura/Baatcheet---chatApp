@@ -11,6 +11,7 @@ import { fetchMessages, sendMessage } from "@/lib/api/chat";
 import { Reply } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {  getSocket } from "@/lib/socket";
+import { addMessage } from "@/store/features/chat.slice";
 
 export default function ChatWithUser() {
   const { receiverId } = useParams();
@@ -51,14 +52,11 @@ export default function ChatWithUser() {
   const socket = getSocket();
   if (!socket) return;
 
-  const handleUserOnline = (userId: string) => {
-    console.log(userId);
-    
+  const handleUserOnline = (userId: string) => {    
     if (userId === receiver) setIsReceiverOnline(true);
   };
 
   const handleUserOffline = (userId: string) => {
-    console.log(userId);
     
     if (userId === receiver) setIsReceiverOnline(false);
   };
@@ -71,6 +69,28 @@ export default function ChatWithUser() {
     socket.off("user-offline", handleUserOffline);
   };
 }, [user?._id, receiver]);
+
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+
+    const handleReceiveMessage = (message: Message) => {
+      if(user)
+      {
+        if (message.roomId === getRoomId(user?._id, receiver)) {
+          dispatch(addMessage(message));
+        }
+
+      }
+    };
+
+  socket.on("receive-message", handleReceiveMessage);
+
+  return () => {
+    socket.off("receive-message", handleReceiveMessage);
+  };
+}, [dispatch, receiver, user?._id]);
+
 
 
   // Auto scroll on new message
@@ -151,7 +171,7 @@ export default function ChatWithUser() {
                   className={`relative max-w-[83vw] sm:max-w-[70%] md:max-w-[55%] rounded-2xl px-5 py-4 shadow-xl transition-all
                   ${
                     isSender
-                      ? "bg-gradient-to-br from-blue-700 via-blue-600 to-purple-600 text-white rounded-br-md"
+                      ? "bg-gradient-to-br from-[#557c93] to-[#08203e] text-white rounded-br-md"
                       : "bg-gradient-to-br from-[#23272f] to-[#181e24] text-blue-100 rounded-bl-md border border-[#282c34]"
                   }`}
                 >

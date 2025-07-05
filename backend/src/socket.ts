@@ -8,7 +8,6 @@ const ONLINE_USERS_SET = "online_users";
 export function setupSocket(io: Server) {
   io.on("connection", (socket: Socket & { userId?: string }) => {
     socket.on("join", async (userId: string) => {
-      console.log("[JOIN] Received:", userId);
       if (!userId) return;
 
       socket.userId = userId;
@@ -22,11 +21,9 @@ export function setupSocket(io: Server) {
 
       if (count === 1) {
         socket.broadcast.emit("user-online", userId);
-        console.log(`[JOIN] Broadcasted user-online: ${userId}`);
       }
 
-      const allOnline = await pubClient.sMembers(ONLINE_USERS_SET);
-      console.log(`[JOIN] Online Users SET:`, allOnline);
+       await pubClient.sMembers(ONLINE_USERS_SET);
     });
 
     socket.on("get-online-users", async (requestingUserId: string) => {
@@ -44,7 +41,6 @@ export function setupSocket(io: Server) {
       );
 
       socket.emit("online-users", onlineFollowings);
-      console.log(`[GET-ONLINE] Sent to ${requestingUserId}:`, onlineFollowings);
     });
 
     socket.on("disconnect", async () => {
@@ -52,12 +48,10 @@ export function setupSocket(io: Server) {
 
       const count = await pubClient.decr(`online_user_count:${socket.userId}`);
 
-      console.log(`[DISCONNECT] User ${socket.userId} count after decr: ${count}`);
 
       if (count <= 0) {
         await pubClient.sRem(ONLINE_USERS_SET, socket.userId);
         socket.broadcast.emit("user-offline", socket.userId);
-        console.log(`[DISCONNECT] Broadcasted user-offline: ${socket.userId}`);
       }
     });
   });
