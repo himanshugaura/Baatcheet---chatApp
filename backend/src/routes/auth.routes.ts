@@ -1,5 +1,5 @@
 import express from "express"
-import '../config/pasport'
+import '../config/passport.js'
 import {
   checkEmail,
   checkUserName,
