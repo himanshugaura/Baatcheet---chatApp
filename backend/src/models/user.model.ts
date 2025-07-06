@@ -69,10 +69,6 @@
           ref: "User",
         },
       ],
-      isOnline: {
-        type: Boolean,
-        default: true,
-      },
       lastSeen: {
         type: Date,
         default: Date.now(),
