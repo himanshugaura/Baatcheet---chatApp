@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import MessageModel from '../models/message.model.js';
-import asyncErrorHandler from '../utils/asyncErrorHandler';
+import asyncErrorHandler from '../utils/asyncErrorHandler.js';
 
 export const getMessages = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {

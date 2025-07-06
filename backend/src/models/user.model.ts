@@ -1,8 +1,8 @@
   import mongoose, { Schema, model } from 'mongoose';
-  import bcrypt from 'bcryptjs';
+  import bcrypt from 'bcrypt';
   import jwt from 'jsonwebtoken';
   import dotenv from 'dotenv';
-  import { IUser } from '../types/type';
+  import { IUser } from '../types/type.js';
 
   dotenv.config();
   const JWT_SECRET = process.env.JWT_SECRET as string;

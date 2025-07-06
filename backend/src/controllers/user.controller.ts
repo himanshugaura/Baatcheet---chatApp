@@ -1,6 +1,6 @@
-import UserModel from "../models/user.model";
+import UserModel from "../models/user.model.js";
 import { Request, Response, NextFunction } from "express";
-import asyncErrorHandler from "../utils/asyncErrorHandler";
+import asyncErrorHandler from "../utils/asyncErrorHandler.js";
 
 export const toggleFollowUser = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {

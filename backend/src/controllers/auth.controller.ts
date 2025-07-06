@@ -1,11 +1,11 @@
 import otpGenerator from "otp-generator";
-import OTPModel from "../models/otp.model";
-import mailSender from "../utils/mailSender";
-import otpTemplate from "../mail/template/mailVerification";
+import OTPModel from "../models/otp.model.js";
+import mailSender from "../utils/mailSender.js";
+import otpTemplate from "../mail/template/mailVerification.js";
 import validator from "validator";
-import UserModel from "../models/user.model";
+import UserModel from "../models/user.model.js";
 import { Request, Response, NextFunction } from "express";
-import asyncErrorHandler from "../utils/asyncErrorHandler";
+import asyncErrorHandler from "../utils/asyncErrorHandler.js";
 import jwt from "jsonwebtoken";
 
 const { isEmail } = validator;

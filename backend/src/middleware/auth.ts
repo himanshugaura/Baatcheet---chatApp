@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { Request, Response, NextFunction } from 'express';
-import asyncErrorHandler from '../utils/asyncErrorHandler';
-import { DecodedUser } from '../types/type';
+import asyncErrorHandler from '../utils/asyncErrorHandler.js';
+import { DecodedUser } from '../types/type.js';
 
 declare global {
   namespace Express {

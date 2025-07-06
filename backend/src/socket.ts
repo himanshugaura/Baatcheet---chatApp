@@ -1,7 +1,7 @@
 import { Server, Socket } from "socket.io";
-import { pubClient } from "./config/redis";
-import UserModel from "./models/user.model";
-import { IUserLean } from "./types/type";
+import { pubClient } from "./config/redis.js";
+import UserModel from "./models/user.model.js";
+import { IUserLean } from "./types/type.js";
 
 const ONLINE_USERS_SET = "online_users";
 

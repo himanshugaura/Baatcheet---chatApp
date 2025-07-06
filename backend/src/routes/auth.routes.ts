@@ -11,9 +11,9 @@ import {
   register,
   sendOTP,
   verifyOTP,
-} from "../controllers/auth.controller";
+} from "../controllers/auth.controller.js";
 import passport from "passport";
-import authMiddleware from "../middleware/auth";
+import authMiddleware from "../middleware/auth.js";
 
 const authRouter = express.Router();
 

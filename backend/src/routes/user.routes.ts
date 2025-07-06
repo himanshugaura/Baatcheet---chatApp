@@ -5,8 +5,8 @@ import {
 
   getUserFollowing,
   toggleFollowUser,
-} from "../controllers/user.controller";
-import authMiddleware from "../middleware/auth";
+} from "../controllers/user.controller.js";
+import authMiddleware from "../middleware/auth.js";
 
 const userRouter = express.Router();
 
