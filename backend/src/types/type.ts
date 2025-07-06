@@ -3,6 +3,7 @@ import { Document, Types } from 'mongoose';
 export interface IUser extends Document {
   name: string;
   userName: string;
+  bio: string;
   email: string;
   password: string;
   googleId: string;
@@ -13,7 +14,6 @@ export interface IUser extends Document {
   groups: Types.ObjectId[];
   followers: Types.ObjectId[];
   following: Types.ObjectId[];
-  isOnline: boolean;
   lastSeen: Date;
   createdAt: Date;
   updatedAt: Date;
