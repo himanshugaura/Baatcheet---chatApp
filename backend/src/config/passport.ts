@@ -1,4 +1,3 @@
-
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import UserModel from "../models/user.model.js";
@@ -15,32 +14,50 @@ passport.deserializeUser(async (id, done) => {
   done(null, user);
 });
 
-passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID!,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-  callbackURL: process.env.GOOGLE_CALLBACK!,
-}, async (_accessToken, _refreshToken, profile, done) => {
-  try {
-     const existingUser = await UserModel.findOne({ googleId: profile.id });
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      callbackURL: process.env.GOOGLE_CALLBACK!,
+    },
+    async (_accessToken, _refreshToken, profile, done) => {
+      try {
+        const existingUser = await UserModel.findOne({ googleId: profile.id });
 
-    if (existingUser) {
-      return done(null, existingUser);
-    }
+        if (existingUser) {
+          return done(null, existingUser);
+        }
 
-    const email = profile.emails?.[0].value || "";
-    const newUser = await UserModel.create({
-      googleId: profile.id,
-      email,
-      name: profile.displayName,
-      userName: profile.displayName,
-      profileImage: {
-        url: profile.photos?.[0].value,
+        const email = profile.emails?.[0].value || "";
+        const baseName = profile.displayName.replace(/\s+/g, '').toLowerCase();
+        let uniqueUserName = "";
+        let isUnique = false;
+
+        while (!isUnique) {
+          const randomSuffix = Math.floor(Math.random() * 10000); 
+          const candidate = `${baseName}${randomSuffix}`;
+          const existing = await UserModel.findOne({ userName: candidate });
+          if (!existing) {
+            uniqueUserName = candidate;
+            isUnique = true;
+          }
+        }
+
+        const newUser = await UserModel.create({
+          googleId: profile.id,
+          email,
+          name: profile.displayName,
+          userName: uniqueUserName,
+          profileImage: {
+            url: profile.photos?.[0].value,
+          },
+        });
+
+        done(null, newUser);
+      } catch (err) {
+        done(err as Error);
       }
-    });
-
-    done(null, newUser);
-  } catch (err) {
-    done(err as Error);
-  }
-}));
-
+    }
+  )
+);
