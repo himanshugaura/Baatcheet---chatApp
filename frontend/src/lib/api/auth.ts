@@ -48,7 +48,14 @@ export const login = (email: string, password: string) => async () => {
       toast.dismiss(toastId);
       toast.success("Logged in!");
       return true;
-    } else {
+    } 
+    else if(res.message == "Password not set on user document.")
+    {
+      toast.dismiss(toastId);
+      toast.error("User not found. Try Google login.");
+      return false;
+    }
+    else {
       toast.dismiss(toastId);
       toast.error(res.message || "Login failed");
       return false;
@@ -127,7 +134,7 @@ export const logout = ( ) => async () => {
   }
 }
 
-export const veriyUserName = (userName : string) => async () => {
+export const verifyUserName = (userName : string) => async () => {
   try {
     const res = await apiConnector("POST", AuthEndpoints.VERIFYUSERNAME_API , {userName});
     

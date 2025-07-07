@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState, useEffect } from "react";
-import { getUserData, sendOTP, verifyEmail, veriyUserName } from "@/lib/api/auth";
+import { getUserData, sendOTP, verifyEmail, verifyUserName } from "@/lib/api/auth";
 import { useAppDispatch } from "@/store/hooks";
 import { useRouter } from "next/navigation";
 import { useDebounce } from "use-debounce";
@@ -140,7 +140,7 @@ export default function RegisterPage() {
       setIsCheckingUsername(true);
       const checkUsernameAvailability = async () => {
         try {
-          const isAvailable = await dispatch(veriyUserName(debouncedUsername));
+          const isAvailable = await dispatch(verifyUserName(debouncedUsername));
           setUsernameAvailable(isAvailable);
         } catch (error) {
           console.error(error);
