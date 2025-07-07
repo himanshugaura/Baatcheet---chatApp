@@ -245,7 +245,7 @@ export default function LoginPage() {
               <p className="inline">Don&apos;t have an account? </p>
 
               <Link
-                href="/register"
+                href="/auth/register"
                 className="font-medium text-indigo-400 hover:underline transition-colors"
               >
                 Sign up
