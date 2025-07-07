@@ -4,8 +4,8 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export const AuthEndpoints = {
   LOGIN_API: BASE_URL + "/auth/login",
   REGISTER_API: BASE_URL + "/auth/register",
-  SENDOTP_API: BASE_URL + "/auth/sendOTP",
-  VERIFYOTP_API: BASE_URL + "/auth/verifyOTP",
+  SENDOTP_API: BASE_URL + "/auth/send-otp",
+  VERIFYOTP_API: BASE_URL + "/auth/verify-otp",
   LOGOUT_API: BASE_URL + "/auth/logout",
   VERIFYUSERNAME_API: BASE_URL + "/auth/check-username",
   VERIFYEMAIL_API: BASE_URL + "/auth/check-email",
@@ -17,6 +17,9 @@ export const UserEndpoints = {
   GET_FOLLOWED_USERS_API: BASE_URL + "/user/following",
   GET_ALL_USERS_API: BASE_URL + "/user/get-all-users",
   TOGGLE_FOLLOW_USER_API: BASE_URL + "/user/toggle-follow-user",
+  UPDATE_PROFILE_IMAGE_API: BASE_URL + "/user/update-profile-image",
+  UPDATE_PROFILE_API: BASE_URL + "/user/update-profile",
+  DELETE_ACCOUNT_API: BASE_URL + "/user/delete-account",
 };
 
 // CHAT ENDPOINTS

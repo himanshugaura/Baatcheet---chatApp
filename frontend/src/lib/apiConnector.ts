@@ -20,7 +20,7 @@ export interface ApiResponse<T = unknown> {
 export const apiConnector = async <T = unknown>(
   method: Method,
   url: string,
-  bodyData?: Record<string, unknown>,
+  bodyData?: Record<string, unknown> | FormData,
   headers?: AxiosRequestHeaders,
   params?: Record<string, string | number | boolean>
 ): Promise<ApiResponse<T>> => {

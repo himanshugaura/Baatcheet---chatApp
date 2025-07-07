@@ -14,22 +14,16 @@
         type: String,
         required: true,
         trim: true,
-        minlength: 2,
-        maxlength: 30,
       },
       bio: 
       {
         type: String,
         trim: true,
-        minlength: 2,
-        maxlength: 100,
       },
       userName: {
         type: String,
         required: true,
         trim: true,
-        minlength: 2,
-        maxlength: 15,
       },
       email: {
         type: String,

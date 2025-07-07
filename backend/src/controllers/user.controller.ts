@@ -1,6 +1,9 @@
 import UserModel from "../models/user.model.js";
 import { Request, Response, NextFunction } from "express";
 import asyncErrorHandler from "../utils/asyncErrorHandler.js";
+import cloudinary from "../config/cloudinary.js";
+import { uploadToCloudinary } from "../utils/uploadToCloudinary.js";
+
 
 export const toggleFollowUser = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -105,3 +108,138 @@ export const getAllUsers = asyncErrorHandler(
     });
   }
 );
+
+export const updateProfileImage = asyncErrorHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const file = req.file;
+    const userId = req.authUser?._id;
+    
+    
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "User not found" 
+      });
+    }
+
+    if (!file) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "No file uploaded." 
+      });
+    }
+
+    const result = await uploadToCloudinary(
+      file.buffer, 
+      `profileImages/${user.userName}`
+    );
+
+    const oldPublicId = user.profileImage?.publicId;
+    if (oldPublicId) {
+      try {
+        await cloudinary.uploader.destroy(oldPublicId);
+      } catch (err) {
+        console.error("Failed to delete old image:", err);
+      }
+    }
+
+    user.profileImage = {
+      url: result.url,
+      publicId: result.public_id,
+    };
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Profile image uploaded successfully.",
+      data: {
+        url: result.url,
+        publicId: result.public_id,
+      },
+    });
+  }
+);
+
+export const updateProfile = asyncErrorHandler(
+  async (req: Request, res: Response) => {
+    const { userName ,name , bio  } = req.body;
+    const userId = req.authUser?._id;
+
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (!bio && !name && !userName) {
+      return res.status(400).json({
+        success: false,
+        message: "Nothing to update",
+      });
+    }
+
+    if (bio && bio !== user.bio) {
+      user.bio = bio;
+    }
+
+    if (name && name !== user.name) {
+      user.name = name;
+    }
+
+    if (userName && userName !== user.userName) {
+      user.userName = userName;
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully.",
+    });
+  }
+);
+
+export const deleteUserAccount = asyncErrorHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.authUser?._id;
+
+    if (!userId) {
+      res.status(401).json({
+        success: false,
+        message: 'Unauthorized: No user ID provided.',
+      });
+      return;
+    }
+
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        message: 'User not found.',
+      });
+      return;
+    }
+
+    if (user.profileImage?.publicId) {
+      try {
+        await cloudinary.uploader.destroy(user.profileImage.publicId);
+      } catch (error) {
+        console.error('Error deleting image from Cloudinary:', error);
+      }
+    }
+
+    await UserModel.findByIdAndDelete(userId);
+
+    res.status(200).json({
+      success: true,
+      message: 'User account deleted1 successfully.',
+    });
+  }
+);
+

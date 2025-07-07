@@ -1,4 +1,4 @@
-import { MessageSquare, Users, Lock, Bell, PlusCircle, LogOut } from "lucide-react";
+import { MessageSquare, Users, Lock, Bell, PlusCircle, LogOut, Settings } from "lucide-react";
 import { Button } from "../ui/button";
 import { Tab } from "@/app/dashboard/layout";
 import { useSelector } from "react-redux";
@@ -64,6 +64,11 @@ export function SidebarNav({ activeTab, onChange }: SidebarNavProps) {
         onClick={() => onChange("create")}
         tooltip="Create Group"
       />
+      <SidebarIconButton
+        icon={<Settings className="h-5 w-5" />}
+        onClick={() => router.push("/dashboard/setting")}
+        tooltip="Setting"
+    />
 
       {/* User Avatar and Username */}
       <div className="mt-auto flex flex-col items-center space-y-2">
@@ -71,7 +76,6 @@ export function SidebarNav({ activeTab, onChange }: SidebarNavProps) {
           <AvatarImage src={user?.profileImage?.url } alt={user?.name} />
           <AvatarFallback>{getInitials(user?.userName || "")}</AvatarFallback>
         </Avatar>
-        <p className="text-sm font-medium">{user?.userName}</p>
         
         {/* Logout Button */}
         <Button
