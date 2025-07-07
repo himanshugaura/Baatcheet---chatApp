@@ -13,7 +13,7 @@ export default function VerifyPage() {
     const sessionRaw = sessionStorage.getItem("registrationData");
   
     if (!sessionRaw) {
-      // router.push("/not-found");
+      router.push("/not-found");
       return;
     }
   
@@ -28,7 +28,7 @@ export default function VerifyPage() {
       }
     } catch (err) {
       console.error("Invalid session data:", err);
-      // router.push("/not-found");
+      router.push("/not-found");
     }
   }, [router]);
   
@@ -45,7 +45,7 @@ export default function VerifyPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+    <div className="flex min-h-screen items-center justify-center p-4 bg-[#040617]">
       <OtpVerification 
       email={email}/>
     </div>
