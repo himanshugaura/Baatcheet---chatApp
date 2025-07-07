@@ -4,6 +4,7 @@ import { apiConnector } from "../apiConnector";
 import { UserEndpoints } from "../apis";
 import { setAllUsers, setFollowedUsers } from "@/store/features/user.slice";
 import { User } from "@/types/type";
+import { getUserData } from "./auth";
 
 export const getAllFolllowedUsers = () => async (dispatch : AppDispatch) => {
     try {
@@ -62,3 +63,86 @@ export const toggleFollowUser = ( targetUserId : string ) => async (dispatch : A
     }
 }
 
+export const uploadProfileImage =
+  (FormData: FormData) => async (dispatch: AppDispatch): Promise<boolean> => {
+    const toastId = toast.loading("Uploading...");
+   try{
+      const res = await apiConnector("POST" , UserEndpoints.UPDATE_PROFILE_IMAGE_API ,FormData);
+      
+      if(res.success)
+      { 
+        toast.success("Uploaded successfullly");
+        toast.dismiss(toastId);
+        await dispatch(getUserData());
+        return true;
+      }
+      else
+      {
+        toast.error("Unable to upload");
+        toast.dismiss(toastId);
+        return false;
+      }
+
+   }catch(err){ 
+    toast.error("Something went wrong");
+    console.error("Profile Image Update error:", err);
+    toast.dismiss(toastId);
+    return false;
+   }
+  };
+
+  export const updateProfile =
+  (name: string , userName : string , bio : string) => async (dispatch: AppDispatch): Promise<boolean> => {
+    const toastId = toast.loading("Updating...");
+   try{
+      const res = await apiConnector("POST" , UserEndpoints.UPDATE_PROFILE_API ,{ userName , name , bio});
+      
+      if(res.success)
+      { 
+        toast.success("Profile Updated");
+        toast.dismiss(toastId);
+        await dispatch(getUserData());
+        return true;
+      }
+      else
+      {
+        toast.error("Unable to update");
+        toast.dismiss(toastId);
+        return false;
+      }
+
+   }catch(err){ 
+    toast.error("Something went wrong");
+    console.error("Profile  Update:", err);
+    toast.dismiss(toastId);
+    return false;
+   }
+  };
+
+  export const deleteAccount =
+  () => async (): Promise<boolean> => {
+    const toastId = toast.loading("Deleting...");
+   try{
+      const res = await apiConnector("POST" , UserEndpoints.DELETE_ACCOUNT_API);
+      console.log(res);
+      
+      if(res.success)
+      { 
+        toast.success("Account Deleted");
+        toast.dismiss(toastId);
+        return true;
+      }
+      else
+      {
+        toast.error("Unable to delete");
+        toast.dismiss(toastId);
+        return false;
+      }
+
+   }catch(err){ 
+    toast.error("Something went wrong");
+    console.error("Account delete error:", err);
+    toast.dismiss(toastId);
+    return false;
+   }
+  };
