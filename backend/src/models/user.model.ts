@@ -30,6 +30,7 @@
         required: true,
         trim: true,
         match: [/.+@.+\..+/, 'Please fill a valid email address'],
+        unique: true,
       },
       googleId: { 
         type: String, 
