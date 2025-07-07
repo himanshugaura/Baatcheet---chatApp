@@ -24,18 +24,25 @@ passport.use(
     async (_accessToken, _refreshToken, profile, done) => {
       try {
         const existingUser = await UserModel.findOne({ googleId: profile.id });
-
-        if (existingUser) {
-          return done(null, existingUser);
-        }
+        if (existingUser) return done(null, existingUser);
 
         const email = profile.emails?.[0].value || "";
-        const baseName = profile.displayName.replace(/\s+/g, '').toLowerCase();
+
+        const userByEmail = await UserModel.findOne({ email });
+        if (userByEmail) {
+          return done(
+            new Error(
+              "An account with this email already exists. Try logging in instead."
+            )
+          );
+        }
+        
+        const baseName = profile.displayName.replace(/\s+/g, "").toLowerCase();
         let uniqueUserName = "";
         let isUnique = false;
 
         while (!isUnique) {
-          const randomSuffix = Math.floor(Math.random() * 10000); 
+          const randomSuffix = Math.floor(Math.random() * 10000);
           const candidate = `${baseName}${randomSuffix}`;
           const existing = await UserModel.findOne({ userName: candidate });
           if (!existing) {
@@ -55,8 +62,15 @@ passport.use(
         });
 
         done(null, newUser);
-      } catch (err) {
-        done(err as Error);
+      } catch (err: any) {
+        if (err.code === 11000 && err.keyPattern?.email) {
+          return done(
+            new Error(
+              "An account with this email already exists. Try logging in instead."
+            )
+          );
+        }
+        done(err);
       }
     }
   )
