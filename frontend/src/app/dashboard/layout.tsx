@@ -11,7 +11,7 @@ import { SidebarNav } from "@/components/dashboard/SidebarNav";
 import { SidebarPanel } from "@/components/dashboard/SidebarPanel";
 import { connectSocket, disconnectSocket } from "@/lib/socket";
 
-export type Tab = "chat" | "public" | "private" | "follow" | "create";
+export type Tab = "chat" | "follow" | "freinds" | "setting";
 
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {

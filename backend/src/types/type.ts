@@ -39,16 +39,6 @@ export interface DecodedUser {
   };
 }
 
-export interface IGroup extends Document {
-  name: string;
-  users: Types.ObjectId[];
-  admins: Types.ObjectId[];
-  owner: Types.ObjectId;
-  type: 'PUBLIC' | 'PRIVATE';
-  createdAt: Date;
-  updatedAt: Date;
-}
-
 export interface IOTP extends Document {
   email: string;
   otp: string;

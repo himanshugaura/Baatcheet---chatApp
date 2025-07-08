@@ -40,43 +40,34 @@ export function SidebarNav({ activeTab, onChange }: SidebarNavProps) {
         onClick={() => onChange("chat")}
         tooltip="Chat"
       />
-      <SidebarIconButton
-        icon={<Users className="h-5 w-5" />}
-        active={activeTab === "public"}
-        onClick={() => onChange("public")}
-        tooltip="Public Groups"
-      />
-      <SidebarIconButton
-        icon={<Lock className="h-5 w-5" />}
-        active={activeTab === "private"}
-        onClick={() => onChange("private")}
-        tooltip="Private Groups"
-      />
+
       <SidebarIconButton
         icon={<Bell className="h-5 w-5" />}
         active={activeTab === "follow"}
         onClick={() => onChange("follow")}
-        tooltip="Followed Groups & Chats"
+        tooltip="Followed Users"
       />
       <SidebarIconButton
         icon={<PlusCircle className="h-5 w-5" />}
-        active={activeTab === "create"}
-        onClick={() => onChange("create")}
-        tooltip="Create Group"
+        active={activeTab === "freinds"}
+        onClick={() => onChange("freinds")}
+        tooltip="Add freinds"
       />
-      <SidebarIconButton
-        icon={<Settings className="h-5 w-5" />}
-        onClick={() => router.push("/dashboard/setting")}
-        tooltip="Setting"
-    />
+      
 
       {/* User Avatar and Username */}
       <div className="mt-auto flex flex-col items-center space-y-2">
+
         <Avatar className="w-10 h-10 text-black">
           <AvatarImage src={user?.profileImage?.url } alt={user?.name} />
           <AvatarFallback>{getInitials(user?.userName || "")}</AvatarFallback>
         </Avatar>
         
+        <SidebarIconButton
+        icon={<Settings className="h-5 w-5" />}
+        onClick={() => router.push("/dashboard/setting")}
+        tooltip="Setting"
+    />
         {/* Logout Button */}
         <Button
           variant="ghost"
