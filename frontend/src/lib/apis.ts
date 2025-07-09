@@ -14,12 +14,16 @@ export const AuthEndpoints = {
 
 // USER ENDPOINTS
 export const UserEndpoints = {
-  GET_FOLLOWED_USERS_API: BASE_URL + "/user/following",
-  GET_ALL_USERS_API: BASE_URL + "/user/get-all-users",
-  TOGGLE_FOLLOW_USER_API: BASE_URL + "/user/toggle-follow-user",
+  GET_CHATS_API: BASE_URL + "/user/get-chats",
+  GET_ALL_CONTACTS_API: BASE_URL + "/user/contacts",
+  ADD_TO_CONTACT_API: BASE_URL + "/user/add-to-contact",
   UPDATE_PROFILE_IMAGE_API: BASE_URL + "/user/update-profile-image",
   UPDATE_PROFILE_API: BASE_URL + "/user/update-profile",
   DELETE_ACCOUNT_API: BASE_URL + "/user/delete-account",
+  SEARCH_USER_API : (query: string) =>
+  `${BASE_URL}/user/search?query=${encodeURIComponent(query)}`,
+  GET_USER_BY_ID : (userId: string) =>
+  `${BASE_URL}/user/get-user-data-byID/${userId}`
 };
 
 // CHAT ENDPOINTS

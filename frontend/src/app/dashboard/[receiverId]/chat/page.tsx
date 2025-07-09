@@ -6,28 +6,42 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useAppDispatch } from "@/store/hooks";
 import Loader from "@/components/common/Loader";
-import { Message } from "@/types/type";
+import { Message, User } from "@/types/type";
 import { fetchMessages, sendMessage } from "@/lib/api/chat";
 import { Reply } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {  getSocket } from "@/lib/socket";
 import { addMessage } from "@/store/features/chat.slice";
+import { getUserDataById } from "@/lib/api/user";
+
+
 
 export default function ChatWithUser() {
   const { receiverId } = useParams();
   const receiver = receiverId as string;
   const { user } = useSelector((state: RootState) => state.auth);
-  const following = useSelector((state: RootState) => state.user.followedUsers);
-  const chatUser = following.find((user) => user._id === receiver);
   const dispatch = useAppDispatch();
   const [newMessage, setNewMessage] = useState("");
   const [loadingMessages, setLoadingMessages] = useState(true);
+   const [loadingReceiver, setLoadingReceiver] = useState(true);
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
   const [isReceiverOnline, setIsReceiverOnline] = useState(false);
   const messageEndRef = useRef<HTMLDivElement>(null);
   const messages: Message[] = useSelector(
     (state: RootState) => state.chat.messages
   );
+  const chatUser  = useSelector(
+    (state: RootState) => state.user.SelectedContact
+  );
+
+  useEffect(() => {
+      const getReceiverData = async () => {
+        await dispatch(getUserDataById(receiver));
+        setLoadingReceiver(false);
+      };
+      getReceiverData();
+    }, [dispatch]);
+  
 
   const msgSendSound = useRef<HTMLAudioElement | null>(null);
   const msgRecSound = useRef<HTMLAudioElement | null>(null);
@@ -146,7 +160,7 @@ export default function ChatWithUser() {
 }, [dispatch, newMessage, user?._id, receiver, replyingTo]);
 
 
-  if (loadingMessages) return <Loader />;
+  if (loadingMessages || loadingReceiver) return <Loader />;
 
   return (
     <div className="flex flex-col h-screen px-2 py-4 md:p-6">
@@ -156,6 +170,7 @@ export default function ChatWithUser() {
           <div className="relative">
             <Avatar className="w-12 h-12">
               <AvatarImage
+              referrerPolicy="no-referrer"
                 src={chatUser?.profileImage?.url || undefined}
                 alt={chatUser?.name || "User"}
               />

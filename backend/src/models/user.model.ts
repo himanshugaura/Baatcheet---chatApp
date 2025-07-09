@@ -59,17 +59,11 @@
           ref: "Group",
         },
       ],
-      followers: [
+      contacts:[
         {
           type: Schema.Types.ObjectId,
-          ref: "User",
-        },
-      ],
-      following: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: "User",
-        },
+          ref: "User"
+        }
       ],
       lastSeen: {
         type: Date,

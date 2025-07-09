@@ -2,17 +2,16 @@ import { AppDispatch } from "@/store/store";
 import toast from "react-hot-toast";
 import { apiConnector } from "../apiConnector";
 import { UserEndpoints } from "../apis";
-import { setAllUsers, setFollowedUsers } from "@/store/features/user.slice";
+import { setContacts, setChats, setSearchedUsers, setSelectedContact } from "@/store/features/user.slice";
 import { User } from "@/types/type";
 import { getUserData } from "./auth";
 
-export const getAllFolllowedUsers = () => async (dispatch : AppDispatch) => {
+export const getUserChats = () => async (dispatch : AppDispatch) => {
     try {
-      const res = await apiConnector<User[]>("GET", UserEndpoints.GET_FOLLOWED_USERS_API);      
+      const res = await apiConnector<User[]>("GET", UserEndpoints.GET_CHATS_API);     
   
-      // Check for success
       if (res.success && res.data) {
-        dispatch(setFollowedUsers(res.data));
+        dispatch(setChats(res.data));
         return true;
       } else {
         toast.error(res.message || "Unable to get chats");
@@ -25,40 +24,77 @@ export const getAllFolllowedUsers = () => async (dispatch : AppDispatch) => {
     }
 }
 
-export const getAllUsers = ( ) => async (dispatch : AppDispatch) => {
+export const getUserDataById = (userId : string) => async (dispatch : AppDispatch) => {
     try {
-      const res = await apiConnector<User[]>("GET", UserEndpoints.GET_ALL_USERS_API);      
-  
+      const res = await apiConnector<User>("GET", UserEndpoints.GET_USER_BY_ID(userId));     
+      console.log(res);
+      
       if (res.success && res.data) {
-        dispatch(setAllUsers(res.data));
+        dispatch(setSelectedContact(res.data));
         return true;
       } else {
-        toast.error(res.message || "Unable to get users");
+        toast.error(res.message || "Unable to get user Data");
         return false;
       }
     } catch (err) {
       toast.error("Something went wrong");
-      console.error("Get All Users error:", err);
+      console.error("Get User Data By Id error:", err);
       return false;
     }
 }
 
-export const toggleFollowUser = ( targetUserId : string ) => async (dispatch : AppDispatch) => {
+export const getAllContacts = () => async (dispatch : AppDispatch) => {
     try {
-      const res = await apiConnector("POST", UserEndpoints.TOGGLE_FOLLOW_USER_API , {targetUserId});      
-      console.log(targetUserId);
-      console.log(res);
+      const res = await apiConnector<User[]>("GET", UserEndpoints.GET_ALL_CONTACTS_API);      
+      console.log("contacts of user" , res);
       
-      if (res.success) {
-        dispatch(getAllFolllowedUsers());
+      if (res.success && res.data) {
+        dispatch(setContacts(res.data));
         return true;
       } else {
-        toast.error(res.message || "Unable to toggle follow user");
+        toast.error(res.message || "Unable to get contacts");
         return false;
       }
     } catch (err) {
       toast.error("Something went wrong");
-      console.error("Toggle Follow User error:", err);
+      console.error("Get All Contacts error:", err);
+      return false;
+    }
+}
+
+export const searchUser = (query : string) => async (dispatch : AppDispatch) => {
+    try {
+      const res = await apiConnector<User[]>("GET", UserEndpoints.SEARCH_USER_API(query));      
+      console.log(res);
+      
+      if (res.success && res.data) {
+        dispatch(setSearchedUsers(res.data));
+        return true;
+      } else {
+        toast.error(res.message || "Unable to Search");
+        return false;
+      }
+    } catch (err) {
+      toast.error("Something went wrong");
+      console.error("Search User error:", err);
+      return false;
+    }
+}
+
+export const addToContact = ( targetUserId : string ) => async (dispatch : AppDispatch) => {
+    try {
+      const res = await apiConnector("POST", UserEndpoints.ADD_TO_CONTACT_API , {targetUserId});      
+      
+      if (res.success) {
+        dispatch(getAllContacts());
+        return true;
+      } else {
+        toast.error(res.message || "Unable to add to contact");
+        return false;
+      }
+    } catch (err) {
+      toast.error("Something went wrong");
+      console.error("Add To Contact error:", err);
       return false;
     }
 }

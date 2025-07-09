@@ -12,8 +12,7 @@ export interface IUser extends Document {
     publicId : string
   }
   groups: Types.ObjectId[];
-  followers: Types.ObjectId[];
-  following: Types.ObjectId[];
+  contacts: Types.ObjectId[];
   lastSeen: Date;
   createdAt: Date;
   updatedAt: Date;

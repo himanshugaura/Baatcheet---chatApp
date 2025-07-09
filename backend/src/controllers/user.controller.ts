@@ -3,71 +3,62 @@ import { Request, Response, NextFunction } from "express";
 import asyncErrorHandler from "../utils/asyncErrorHandler.js";
 import cloudinary from "../config/cloudinary.js";
 import { uploadToCloudinary } from "../utils/uploadToCloudinary.js";
+import MessageModel from "../models/message.model.js";
 
 
-export const toggleFollowUser = asyncErrorHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const  {targetUserId}  = req.body;
+export const addToContact = asyncErrorHandler(
+  async (req: Request, res: Response) => {
+    const { targetUserId } = req.body;
     const currentUserId = req.authUser?._id;
-    console.log(targetUserId);
-    
+
     if (currentUserId === targetUserId) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: "You can't follow or unfollow yourself." 
+        message: "You can't save your own contact.",
       });
     }
 
     const currentUser = await UserModel.findById(currentUserId);
     const targetUser = await UserModel.findById(targetUserId);
 
-    if (!targetUser || !currentUser) {
-      return res.status(404).json({ 
+    if (!currentUser) {
+      return res.status(404).json({
         success: false,
-        message: "Target user not found." 
+        message: "User not found.",
       });
     }
 
-    const isFollowing = currentUser.following.includes(targetUserId);
-
-    if (isFollowing) {
-      // Unfollow logic
-      currentUser.following = currentUser.following.filter(
-        (id : string) => id.toString() !== targetUserId
-      );
-      targetUser.followers = targetUser.followers.filter(
-        (id : string) => id.toString() !== currentUserId
-      );
-
-      await currentUser.save();
-      await targetUser.save();
-
-      return res.status(200).json({
-        success: true,
-        message: "Successfully unfollowed the user.",
-      });
-    } else {
-      // Follow logic
-      currentUser.following.push(targetUserId);
-      targetUser.followers.push(currentUserId);
-
-      await currentUser.save();
-      await targetUser.save();
-
-      return res.status(200).json({
-        success: true,
-        message: "Successfully followed the user.",
+    if (!targetUser) {
+      return res.status(404).json({
+        success: false,
+        message: "Target user not found.",
       });
     }
+
+    const isContact = currentUser.contacts.includes(targetUserId);
+
+    if (isContact) {
+      return res.status(400).json({
+        success: false,
+        message: "Contact already saved.",
+      });
+    }
+
+    currentUser.contacts.push(targetUserId);
+    await currentUser.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Successfully saved contact.",
+    });
   }
 );
 
-
-export const getUserFollowing = asyncErrorHandler(
+export const getUserContacts = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const  userId  = req.authUser?._id;
-    const user = await UserModel.findById(userId).populate("following");
-
+    const user = await UserModel.findById(userId).populate("contacts");
+    
     if (!user) {
       res.status(404).json({ 
         success: false, 
@@ -78,36 +69,72 @@ export const getUserFollowing = asyncErrorHandler(
 
     res.status(200).json({ 
       success: true, 
-      data: user.following 
+      data: user.contacts 
     });
   }
 );
 
-export const getAllUsers = asyncErrorHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const currentUserId = req.authUser?._id;
-    
-    // Fetch the current user's following list
-    const currentUser = await UserModel.findById(currentUserId).select('following');
+export const getUserChats = asyncErrorHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.authUser?._id;
 
-    if (!currentUser) {
+    
+    const user = await UserModel.findById(userId);
+    if (!user) {
       return res.status(404).json({
         success: false,
-        message: "Current user not found",
+        message: "User not found",
       });
     }
 
-    // Exclude current user and the users they are following
-    const users = await UserModel.find({
-      _id: { $nin: [currentUserId, ...currentUser.following] },
-    });
+    const uniqueContacts = await MessageModel.aggregate([
+      {
+        $match: {
+          $or: [
+            { senderId: user._id },
+            { receiverId: user._id },
+          ],
+        },
+      },
+      {
+        $project: {
+          otherUser: {
+            $cond: [
+              { $eq: ["$senderId", user._id] },
+              "$receiverId",
+              "$senderId",
+            ],
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$otherUser",
+        },
+      },
+    ]);
+
+    const contactIds = uniqueContacts.map(c => c._id);
+
+    if (contactIds.length === 0) {
+      return res.status(200).json({
+        success: true,
+        data: [],
+      });
+    }
+
+    
+    const contacts = await UserModel.find({
+      _id: { $in: contactIds },
+    }).select("_id name userName profileImage");
 
     res.status(200).json({
       success: true,
-      data: users,
+      data: contacts,
     });
   }
 );
+
 
 export const updateProfileImage = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -238,8 +265,70 @@ export const deleteUserAccount = asyncErrorHandler(
 
     res.status(200).json({
       success: true,
-      message: 'User account deleted1 successfully.',
+      message: 'User account deleted successfully.',
     });
   }
 );
 
+
+export const searchUsers = asyncErrorHandler(
+  async (req: Request, res: Response) => {
+    const query = req.query.query as string;
+    const currentUserId = req.authUser?._id; 
+    
+    if (!query || query.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Query parameter is required.",
+      });
+    }
+
+    const currentUser = await UserModel.findById(currentUserId).select("contacts");
+    if (!currentUser) {
+      return res.status(404).json({
+        success: false,
+        message: "Current user not found.",
+      });
+    }
+
+    const excludeIds = [currentUserId, ...currentUser.contacts];
+
+    const users = await UserModel.find({
+      $and: [
+        {
+          $or: [
+            { userName: { $regex: query, $options: "i" } },
+            { email: { $regex: query, $options: "i" } },
+          ],
+        },
+        { _id: { $nin: excludeIds } }, 
+      ],
+    }).select("_id userName name email profileImage");
+
+    res.status(200).json({
+      success: true,
+      data: users,
+    });
+  }
+);
+
+
+export const getUserDataById = asyncErrorHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const userId = req.params.userId;
+
+    const user = await UserModel.findById(userId).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: user,
+    });
+  }
+);

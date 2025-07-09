@@ -42,16 +42,10 @@ export function SidebarNav({ activeTab, onChange }: SidebarNavProps) {
       />
 
       <SidebarIconButton
-        icon={<Bell className="h-5 w-5" />}
-        active={activeTab === "follow"}
-        onClick={() => onChange("follow")}
-        tooltip="Followed Users"
-      />
-      <SidebarIconButton
         icon={<PlusCircle className="h-5 w-5" />}
         active={activeTab === "freinds"}
         onClick={() => onChange("freinds")}
-        tooltip="Add freinds"
+        tooltip="New Chat"
       />
       
 
@@ -59,7 +53,8 @@ export function SidebarNav({ activeTab, onChange }: SidebarNavProps) {
       <div className="mt-auto flex flex-col items-center space-y-2">
 
         <Avatar className="w-10 h-10 text-black">
-          <AvatarImage src={user?.profileImage?.url } alt={user?.name} />
+          <AvatarImage src={user?.profileImage?.url } alt={user?.name} 
+            referrerPolicy="no-referrer"/>
           <AvatarFallback>{getInitials(user?.userName || "")}</AvatarFallback>
         </Avatar>
         

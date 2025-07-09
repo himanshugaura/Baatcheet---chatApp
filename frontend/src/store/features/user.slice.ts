@@ -2,27 +2,37 @@ import { User } from "@/types/type";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface ChatState {
-  followedUsers: User[];
-  users: User[]; 
+  chats: User[];
+  contacts: User[]; 
+  searchedUsers: User[],
+  SelectedContact: User | null,
 }
 
 const initialState: ChatState = {
-  followedUsers: [],
-  users: [], 
+  chats: [],
+  contacts: [], 
+  searchedUsers: [],
+  SelectedContact: null
 };
 
 export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setFollowedUsers: (state, action: PayloadAction<User[]>) => {
-      state.followedUsers = action.payload;
+    setChats: (state, action: PayloadAction<User[]>) => {
+      state.chats = action.payload;
     },
-    setAllUsers: (state, action: PayloadAction<User[]>) => {
-      state.users = action.payload;
+    setContacts: (state, action: PayloadAction<User[]>) => {
+      state.contacts = action.payload;
+    },
+    setSearchedUsers: (state, action: PayloadAction<User[]>) => {
+      state.searchedUsers = action.payload;
+    },
+    setSelectedContact: (state, action: PayloadAction<User>) => {
+      state.SelectedContact = action.payload;
     },
   },
 });
 
-export const { setFollowedUsers, setAllUsers } = userSlice.actions;
+export const { setSearchedUsers ,setChats , setContacts  , setSelectedContact} = userSlice.actions;
 export default userSlice.reducer;
