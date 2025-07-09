@@ -16,22 +16,28 @@ import { addMessage } from "@/store/features/chat.slice";
 export default function ChatWithUser() {
   const { receiverId } = useParams();
   const receiver = receiverId as string;
-
   const { user } = useSelector((state: RootState) => state.auth);
   const following = useSelector((state: RootState) => state.user.followedUsers);
   const chatUser = following.find((user) => user._id === receiver);
-
   const dispatch = useAppDispatch();
-
   const [newMessage, setNewMessage] = useState("");
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
   const [isReceiverOnline, setIsReceiverOnline] = useState(false);
-
   const messageEndRef = useRef<HTMLDivElement>(null);
   const messages: Message[] = useSelector(
     (state: RootState) => state.chat.messages
   );
+
+  const msgSendSound = useRef<HTMLAudioElement | null>(null);
+  const msgRecSound = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+  msgSendSound.current = new Audio('/audio/msg_send.mp3');
+  msgSendSound.current.preload = 'auto';
+  msgRecSound.current = new Audio('/audio/msg_rec.mp3');
+  msgRecSound.current.preload = 'auto';
+}, []);
 
   const getRoomId = (id1: string, id2: string): string =>
     [id1, id2].sort().join("_");
@@ -45,8 +51,6 @@ export default function ChatWithUser() {
     };
     loadData();
   }, [dispatch, user?._id, receiver]);
-
-  
 
   useEffect(() => {
   const socket = getSocket();
@@ -79,6 +83,16 @@ export default function ChatWithUser() {
       {
         if (message.roomId === getRoomId(user?._id, receiver)) {
           dispatch(addMessage(message));
+         if (
+  message?.senderId !== user?._id &&
+  msgRecSound.current 
+) {
+  msgRecSound.current.currentTime = 0;
+  msgRecSound.current.play().catch((err) => {
+    console.warn("Receive sound play blocked:", err);
+  });
+}
+
         }
 
       }
@@ -98,25 +112,39 @@ export default function ChatWithUser() {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Send handler
+  
+
   const handleSend = useCallback(async () => {
-    if (!newMessage.trim() || !user?._id) return;
+  if (!newMessage.trim() || !user?._id) return;
 
-    const roomId = getRoomId(user._id, receiver);
+  if (!msgSendSound.current) {
+    msgSendSound.current = new Audio('/audio/msg_send.mp3');
+    msgSendSound.current.preload = 'auto';
+  }
 
-    await dispatch(
-      sendMessage(
-        user._id,
-        receiver,
-        newMessage,
-        roomId,
-        replyingTo?._id ?? null
-      )
-    );
+  const roomId = getRoomId(user._id, receiver);
 
-    setNewMessage("");
-    setReplyingTo(null);
-  }, [dispatch, newMessage, user?._id, receiver, replyingTo]);
+  const result = await dispatch(
+    sendMessage(
+      user._id,
+      receiver,
+      newMessage,
+      roomId,
+      replyingTo?._id ?? null
+    )
+  );
+
+  if (result && msgSendSound.current) {
+    msgSendSound.current.currentTime = 0;
+    msgSendSound.current.play().catch((err) => {
+      console.warn("Send sound play blocked:", err);
+    });
+  } 
+
+  setNewMessage("");
+  setReplyingTo(null);
+}, [dispatch, newMessage, user?._id, receiver, replyingTo]);
+
 
   if (loadingMessages) return <Loader />;
 
