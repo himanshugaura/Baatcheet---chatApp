@@ -13,7 +13,7 @@ export default function CreateGroupPanel() {
   
       <Button className="w-full" onClick={() => router.push("/dashboard/followUsers")}>
         <PlusCircle className="mr-2 h-4 w-4" />
-        Add New Friends
+        Add New Friends 
       </Button>
     </div>
   );
