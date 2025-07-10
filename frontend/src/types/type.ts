@@ -10,9 +10,7 @@ export interface User {
     url: string;
     publicId: string;
   };
-  groups: string[];
   contacts: string[];
-  isOnline: boolean;
   lastSeen: Date;
   createdAt: Date;
   updatedAt: Date;
