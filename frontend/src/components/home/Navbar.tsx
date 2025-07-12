@@ -36,15 +36,6 @@ export default function Navbar() {
 
         {/* Right side icons */} 
         <div className="flex items-center gap-4">
-          {/* Notification Icon */}
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="p-2 rounded-full cursor-pointer"
-            aria-label="Notifications"
-          >
-            <Bell className="h-5 w-5" />
-          </motion.button>
 
           {/* Profile Avatar */}
 
