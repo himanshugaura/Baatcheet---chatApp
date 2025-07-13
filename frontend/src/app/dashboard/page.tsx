@@ -4,7 +4,7 @@
   import { SidebarPanel } from "@/components/dashboard/SidebarPanel";
   import { useMediaQuery } from "@/hooks/use-media-query";
   import { motion } from "framer-motion";
-  import { Sparkles, MessageCircle, User, Users, Settings } from "lucide-react";
+  import { Sparkles } from "lucide-react";
   import { useEffect, useState } from "react";
   import { Tab } from "./layout";
 
@@ -98,7 +98,7 @@
               transition={{ duration: 0.5 }}
               className="text-4xl md:text-5xl font-bold text-white mb-4"
             >
-              Let's start chatting
+              Let&apos;s start chatting
             </motion.h1>
             <motion.p
               initial={{ opacity: 0 }}

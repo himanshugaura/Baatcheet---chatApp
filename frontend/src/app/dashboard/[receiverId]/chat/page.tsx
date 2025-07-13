@@ -20,7 +20,7 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 export default function ChatWithUser() {
   const { receiverId } = useParams();
   const receiver = receiverId as string;
-  const { user } = useSelector((state: RootState) => state.auth);
+  const user  = useSelector((state: RootState) => state.auth .user) as User;
   const dispatch = useAppDispatch();
   const [newMessage, setNewMessage] = useState("");
   const [loadingMessages, setLoadingMessages] = useState(true);
@@ -43,7 +43,7 @@ export default function ChatWithUser() {
         setLoadingReceiver(false);
       };
       getReceiverData();
-    }, [dispatch]);
+    }, [dispatch , receiver]);
   
 
   const msgSendSound = useRef<HTMLAudioElement | null>(null);
@@ -67,7 +67,7 @@ export default function ChatWithUser() {
       setLoadingMessages(false);
     };
     loadData();
-  }, [dispatch, user?._id, receiver]);
+  }, [dispatch, user, receiver]);
 
   useEffect(() => {
   const socket = getSocket();
@@ -120,7 +120,7 @@ export default function ChatWithUser() {
   return () => {
     socket.off("receive-message", handleReceiveMessage);
   };
-}, [dispatch, receiver, user?._id]);
+}, [dispatch, receiver, user]);
 
 
 

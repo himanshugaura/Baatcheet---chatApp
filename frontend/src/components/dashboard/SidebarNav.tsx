@@ -1,4 +1,4 @@
-import { MessageSquare, Users, Lock, Bell, PlusCircle, LogOut, Settings } from "lucide-react";
+import { MessageSquare , PlusCircle, LogOut, Settings } from "lucide-react";
 import { Button } from "../ui/button";
 import { Tab } from "@/app/dashboard/layout";
 import { useSelector } from "react-redux";

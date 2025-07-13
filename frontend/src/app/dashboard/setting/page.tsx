@@ -33,6 +33,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import { Area } from "react-easy-crop";
 
 const profileSchema = z.object({
   name: z.string()
@@ -62,7 +63,7 @@ const ProfileSettings = () => {
   const [rawImage, setRawImage] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
   const router = useRouter();
@@ -117,9 +118,9 @@ const ProfileSettings = () => {
     }
   }, [user, reset]);
 
-  const onCropComplete = (croppedArea: any, croppedAreaPixels: any) => {
-    setCroppedAreaPixels(croppedAreaPixels);
-  };
+ const onCropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
+  setCroppedAreaPixels(croppedAreaPixels);
+};
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -156,7 +157,7 @@ const ProfileSettings = () => {
       const formData = new FormData();
       formData.append("file", croppedFile);
 
-      const result = await dispatch(uploadProfileImage(formData));
+       await dispatch(uploadProfileImage(formData));
       
     } 
     finally {
@@ -171,7 +172,7 @@ const ProfileSettings = () => {
 
   const handleDeleteAccount = async () => {
     setIsLoading(true);
-   const result =  await dispatch(deleteAccount());
+   const result = await dispatch(deleteAccount());
 
     if(result)
     {
@@ -194,7 +195,7 @@ const ProfileSettings = () => {
 
     try {
       setIsLoading(true);
-      const result = await dispatch(updateProfile(data.name , data.userName , data.bio));
+     await dispatch(updateProfile(data.name , data.userName , data.bio));
     } 
     finally {
       setIsLoading(false);

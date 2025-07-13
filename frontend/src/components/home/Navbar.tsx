@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { User, Bell } from 'lucide-react';
+import { User } from 'lucide-react';
 import Image from 'next/image';
 import { RootState } from '@/store/store';
 import { useSelector } from 'react-redux';

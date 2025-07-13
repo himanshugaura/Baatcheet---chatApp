@@ -7,7 +7,6 @@ import { AppDispatch, RootState } from "@/store/store";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getUserChats } from "@/lib/api/user";
 import { User } from "@/types/type";
-import { socket } from "@/lib/socket";
 
 export function ChatPanel() {
   const dispatch = useDispatch<AppDispatch>();
@@ -15,7 +14,6 @@ export function ChatPanel() {
   const { user } = useSelector((state: RootState) => state.auth);
   const { chats } = useSelector((state: RootState) => state.user);
   const [loading, setLoading] = useState(true);
-  const [onlineStatus, setOnlineStatus] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,34 +27,6 @@ export function ChatPanel() {
     fetchData();
   }, [dispatch, user?._id]);
 
-
-useEffect(() => {
-  if (!socket) return;
-
-  socket.emit("get-online-users");
-
-  socket.on("online-users", (onlineIds: string[]) => {
-    const statusMap = onlineIds.reduce((acc, id) => {
-      acc[id] = true;
-      return acc;
-    }, {} as { [key: string]: boolean });
-    setOnlineStatus(statusMap);
-  });
-
-  socket.on("user-online", (id: string) => {
-    setOnlineStatus((prev) => ({ ...prev, [id]: true }));
-  });
-
-  socket.on("user-offline", (id: string) => {
-    setOnlineStatus((prev) => ({ ...prev, [id]: false }));
-  });
-
-  return () => {
-    socket?.off("online-users");
-    socket?.off("user-online");
-    socket?.off("user-offline");
-  };
-}, []);
   
   return (
     <div className="space-y-4">
@@ -82,11 +52,6 @@ useEffect(() => {
                 <h3 className="font-medium">
                   {user.name || "No Username"}
                 </h3>
-                <p className="text-sm text-muted-foreground capitalize">
-                  {onlineStatus[user._id]
-                    ? "Online"
-                    : user.isOnline || "Offline"}
-                </p>
               </div>
             </div>
           </div>

@@ -1,6 +1,8 @@
+import { Area } from "react-easy-crop";
+
 export default function getCroppedImg(
   imageSrc: string,
-  pixelCrop: any,
+  pixelCrop: Area,
   originalFileName: string
 ): Promise<File> {
   return new Promise((resolve, reject) => {
