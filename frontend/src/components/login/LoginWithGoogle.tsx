@@ -5,7 +5,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const LoginWithGoogle = () => {
     return (
         <Link
-            href={`${BASE_URL}/auth/google`}
+            href={`${BASE_URL}/api/auth/google`}
             className="w-full p-3 rounded-lg border border-gray-300 bg-white text-gray-700 flex justify-center items-center gap-3 font-medium shadow-sm hover:shadow-md transition-all duration-200 hover:bg-gray-50 active:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
             <span className="w-5 h-5">
