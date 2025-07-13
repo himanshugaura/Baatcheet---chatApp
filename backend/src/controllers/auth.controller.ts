@@ -125,7 +125,7 @@ export const logout = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     res.clearCookie("token", {
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       secure: process.env.NODE_ENV === "production",
     });
     res.status(200).json({ 
