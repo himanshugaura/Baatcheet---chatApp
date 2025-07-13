@@ -1,9 +1,10 @@
 import { io, Socket } from "socket.io-client";
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export let socket: Socket | null = null;
 export const connectSocket = (userId: string) => {
   if (!socket) {
-    socket = io("http://localhost:3030");
+    socket = io(BASE_URL);
     socket.emit("join", userId);
   }
 };
