@@ -8,13 +8,14 @@ import { useAppDispatch } from "@/store/hooks";
 import Loader from "@/components/common/Loader";
 import { Message, User } from "@/types/type";
 import { fetchMessages, sendMessage } from "@/lib/api/chat";
-import { Reply } from "lucide-react";
+import { MoveLeft, Reply } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {  getSocket } from "@/lib/socket";
 import { addMessage } from "@/store/features/chat.slice";
 import { getUserDataById } from "@/lib/api/user";
-
-
+import { Button } from "@/components/common/Button";
+import { useMediaQuery } from "@/hooks/use-media-query";
+  
 
 export default function ChatWithUser() {
   const { receiverId } = useParams();
@@ -33,6 +34,8 @@ export default function ChatWithUser() {
   const chatUser  = useSelector(
     (state: RootState) => state.user.SelectedContact
   );
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+
 
   useEffect(() => {
       const getReceiverData = async () => {
@@ -166,7 +169,14 @@ export default function ChatWithUser() {
     <div className="flex flex-col h-screen px-2 py-4 md:p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-4 p-4 bg-gradient-to-br from-[#191c21]/90 to-[#23272f]/80 rounded-2xl shadow-lg border border-[#23272f]">
-        <div className="flex items-center">
+        <div className="flex items-center gap-4">
+          {!isDesktop &&(<Button
+          size="sm"
+          className="p-2 rounded-4xl"
+          onClickLink="/dashboard">
+           <MoveLeft color="white"/>
+          </Button>
+          )}
           <div className="relative">
             <Avatar className="w-12 h-12">
               <AvatarImage

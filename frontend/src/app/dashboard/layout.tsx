@@ -60,7 +60,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <SidebarPanel activeTab={activeTab} />
         </>
       ) : (
-        <div className="fixed bottom-0 w-full">
+        <div>
 
         </div>
       )}

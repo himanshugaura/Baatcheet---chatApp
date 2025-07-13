@@ -6,11 +6,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/common/Button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Search, UserPlus, User } from "lucide-react";
+import { Search, UserPlus, User, MoveLeft } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { useAppDispatch } from "@/store/hooks";
 import { searchUser, addToContact } from "@/lib/api/user";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 export default function UserListPage() {
   const dispatch = useAppDispatch();
@@ -40,9 +41,11 @@ export default function UserListPage() {
     await dispatch(addToContact(targetUserId));
     setLoadingUserId(null);
   };
+  const isDesktop = useMediaQuery("(min-width: 768px)");
+
 
   return (
-    <div className="min-h-screen p-4 md:p-8 bg-gradient-to-br from-gray-900 to-gray-950">
+    <div className="min-h-[300vh] p-4 md:p-8 bg-gradient-to-br from-gray-900 to-gray-950">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -50,6 +53,13 @@ export default function UserListPage() {
         className="max-w-3xl mx-auto"
       >
         <div className="text-center mb-8">
+          {!isDesktop &&(<Button
+          size="sm"
+          className="p-2 rounded-4xl absolute left-5"
+          onClickLink="/dashboard">
+           <MoveLeft color="white"/>
+          </Button>
+          )}
           <motion.h1
             className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-300 mb-2"
             initial={{ opacity: 0, y: -10 }}
