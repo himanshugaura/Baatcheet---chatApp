@@ -10,9 +10,10 @@ import Loader from "@/components/common/Loader";
 import { SidebarNav } from "@/components/dashboard/SidebarNav";
 import { SidebarPanel } from "@/components/dashboard/SidebarPanel";
 import { connectSocket, disconnectSocket } from "@/lib/socket";
+import { useMediaQuery } from "@/hooks/use-media-query";
+
 
 export type Tab = "chat" | "follow" | "freinds" | "setting";
-
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [activeTab, setActiveTab] = useState<Tab>("chat");
@@ -20,6 +21,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const user = useSelector((state: RootState) => state.auth.user);
   const dispatch = useAppDispatch();
   const router = useRouter();
+
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   useEffect(() => {
     const checkUser = async () => {
@@ -35,7 +38,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     }
   }, [isCheckingUser, user, router]);
 
-
   useEffect(() => {
     if (!user?._id) return;
 
@@ -46,20 +48,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     };
   }, [user?._id]);
 
-   if (isCheckingUser) {
-    return (
-      <Loader/>
-    );
+  if (isCheckingUser) {
+    return <Loader />;
   }
 
- return (
-  <div className="flex h-screen overflow-hidden">
-    <SidebarNav activeTab={activeTab} onChange={setActiveTab} />
-    <SidebarPanel activeTab={activeTab} />
-    <main className="flex-1 overflow-y-auto  bg-[#040617]">
-      {children}
-    </main>
-  </div>
-);
+  return (
+    <div className="flex h-screen overflow-hidden">
+      {isDesktop ? (
+        <>
+          <SidebarNav activeTab={activeTab} onChange={setActiveTab} />
+          <SidebarPanel activeTab={activeTab} />
+        </>
+      ) : (
+        <div className="fixed bottom-0 w-full">
 
+        </div>
+      )}
+
+      <main className="flex-1 overflow-y-auto bg-[#040617]">
+        {children}
+      </main>
+    </div>
+  );
 }

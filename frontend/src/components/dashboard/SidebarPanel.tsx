@@ -4,7 +4,7 @@ import NewChat from "./panels/newChat";
 
 export function SidebarPanel({ activeTab }: { activeTab: Tab }) {
   return (
-    <div className=" border-r bg- p-4 overflow-y-auto text-white">
+    <div className="w-full border-r bg- p-4 overflow-y-auto text-white md:w-fit">
       {activeTab === "chat" && <ChatPanel />}
       {activeTab === "freinds" && <NewChat />}
     </div>
