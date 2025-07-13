@@ -57,7 +57,6 @@ useEffect(() => {
     socket?.off("user-offline");
   };
 }, []);
-  console.log(chats);
   
   return (
     <div className="space-y-4">

@@ -27,7 +27,6 @@ export const getUserChats = () => async (dispatch : AppDispatch) => {
 export const getUserDataById = (userId : string) => async (dispatch : AppDispatch) => {
     try {
       const res = await apiConnector<User>("GET", UserEndpoints.GET_USER_BY_ID(userId));     
-      console.log(res);
       
       if (res.success && res.data) {
         dispatch(setSelectedContact(res.data));
@@ -46,7 +45,6 @@ export const getUserDataById = (userId : string) => async (dispatch : AppDispatc
 export const getAllContacts = () => async (dispatch : AppDispatch) => {
     try {
       const res = await apiConnector<User[]>("GET", UserEndpoints.GET_ALL_CONTACTS_API);      
-      console.log("contacts of user" , res);
       
       if (res.success && res.data) {
         dispatch(setContacts(res.data));
@@ -65,7 +63,6 @@ export const getAllContacts = () => async (dispatch : AppDispatch) => {
 export const searchUser = (query : string) => async (dispatch : AppDispatch) => {
     try {
       const res = await apiConnector<User[]>("GET", UserEndpoints.SEARCH_USER_API(query));      
-      console.log(res);
       
       if (res.success && res.data) {
         dispatch(setSearchedUsers(res.data));
@@ -160,7 +157,6 @@ export const uploadProfileImage =
     const toastId = toast.loading("Deleting...");
    try{
       const res = await apiConnector("POST" , UserEndpoints.DELETE_ACCOUNT_API);
-      console.log(res);
       
       if(res.success)
       { 
