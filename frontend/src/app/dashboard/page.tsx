@@ -4,7 +4,7 @@
   import { SidebarPanel } from "@/components/dashboard/SidebarPanel";
   import { useMediaQuery } from "@/hooks/use-media-query";
   import { motion } from "framer-motion";
-  import { Sparkles, MessageCircle, User, Users, Settings, Sidebar } from "lucide-react";
+  import { Sparkles, MessageCircle, User, Users, Settings } from "lucide-react";
   import { useEffect, useState } from "react";
   import { Tab } from "./layout";
 
@@ -24,7 +24,7 @@
       </div>)
     }
     return (
-      <div className="flex-1 overflow-y-auto bg-[#040617] relative">
+      <div className="flex-1 overflow-y-auto bg-[#040617] relative min-h-screen flex items-center justify-center">
         {/* Claymorphism elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {isClient && (
@@ -108,35 +108,6 @@
             >
               Select a conversation or explore the app using the sidebar menus.
             </motion.p>
-          </motion.div>
-
-          {/* Quick action icons */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8"
-          >
-            {[
-              { icon: MessageCircle, label: "New Chat", color: "text-blue-400" },
-              { icon: User, label: "Profile", color: "text-purple-400" },
-              { icon: Users, label: "Friends", color: "text-indigo-400" },
-              { icon: Settings, label: "Settings", color: "text-violet-400" },
-            ].map((item, index) => (
-              <motion.div
-                key={item.label}
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.4 + index * 0.1, duration: 0.3 }}
-                whileHover={{ y: -5 }}
-                className="flex flex-col items-center cursor-pointer"
-              >
-                <div className="p-4 rounded-2xl bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 shadow-lg mb-2">
-                  <item.icon className={`w-6 h-6 ${item.color}`} />
-                </div>
-                <span className="text-sm text-gray-300">{item.label}</span>
-              </motion.div>
-            ))}
           </motion.div>
         </div>
       </div>
