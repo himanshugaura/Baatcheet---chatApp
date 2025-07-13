@@ -8,7 +8,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
   variant?: "primary" | "secondary";
   size?: "sm" | "md" | "lg";
-  onClickLink?: string; // New prop for link navigation
+  onClickLink?: string; 
 }
 
 export const Button = ({
@@ -53,7 +53,7 @@ export const Button = ({
     onClick={onClick}
     {...props}
   >
-    <div className="flex items-center gap-2">{children}</div>
+    <div className="flex items-center gap-2 justify-center">{children}</div>
   </button>
 </Link>
 
@@ -72,7 +72,7 @@ export const Button = ({
   onClick={onClick}
   {...props}
 >
-  <div className="flex items-center gap-2">{children}</div> 
+  <div className="flex items-center gap-2 justify-center">{children}</div> 
 </button>
 
   );
