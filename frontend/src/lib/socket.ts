@@ -5,7 +5,10 @@ export let socket: Socket | null = null;
 export const connectSocket = (userId: string) => {
   if (!socket) {
     socket = io(BASE_URL);
-    socket.emit("join", userId);
+
+    socket.on("connect", () => {
+      socket?.emit("join", userId);
+    });
   }
 };
 

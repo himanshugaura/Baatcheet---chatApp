@@ -10,6 +10,7 @@ export const AuthEndpoints = {
   VERIFYUSERNAME_API: BASE_URL + "/auth/check-username",
   VERIFYEMAIL_API: BASE_URL + "/auth/check-email",
   GET_USER_DATA_API: BASE_URL + "/auth/get-user-data",
+  SET_COOKIE_API: BASE_URL + "/auth/set-cookie",
 };
 
 // USER ENDPOINTS
@@ -32,6 +33,4 @@ export const ChatEndpoints = {
     `${BASE_URL}/chat/messages/${senderId}/${receiverId}`,
 
   SEND_MESSAGE_API: BASE_URL + "/chat/message",
-  GET_ONLINE_STATUS_API: (userId: string) =>
-    `${BASE_URL}/online/${userId}/status`,
 };

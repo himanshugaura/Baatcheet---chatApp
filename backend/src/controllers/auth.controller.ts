@@ -104,9 +104,19 @@ export const googleLogin = asyncErrorHandler(
     }
 
     const user = req.user as any;
-
-
     const token = user.generateJWT();
+
+    res.redirect(`${process.env.CLIENT_URL}/auth/oauth-success?token=${token}`);
+  }
+);
+
+export const setCookie = asyncErrorHandler(
+  async (req: Request, res: Response) => {
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ success: false, message: "No token" });
+    }
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -115,9 +125,10 @@ export const googleLogin = asyncErrorHandler(
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    res.redirect(`${process.env.CLIENT_URL}/dashboard`);
+    res.json({ success: true });
   }
 );
+
 
 
 

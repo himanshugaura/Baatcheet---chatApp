@@ -165,6 +165,21 @@ export const verifyEmail = (email : string) => async () => {
   }
 }
 
+export const setCookie  = (token : string) => async () => {
+  try {
+    const res = await apiConnector("POST", AuthEndpoints.SET_COOKIE_API , {token});
+  
+    if (res.success) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (err) {
+    console.error("setCookie error:", err);
+    return false;
+  }
+}
+
 
 export const getUserData = () => async (dispatch: AppDispatch): Promise<boolean> => {
   try {

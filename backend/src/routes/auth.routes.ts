@@ -10,6 +10,7 @@ import {
   logout,
   register,
   sendOTP,
+  setCookie,
   verifyOTP,
 } from "../controllers/auth.controller.js";
 import passport from "passport";
@@ -34,6 +35,7 @@ authRouter.get(
 authRouter.post("/logout", logout);
 authRouter.post("/send-otp", sendOTP);
 authRouter.post("/verify-otp", verifyOTP);
+authRouter.post("/set-cookie", setCookie);
 authRouter.get("/get-user-data", authMiddleware, getUser);
 
 export default authRouter
