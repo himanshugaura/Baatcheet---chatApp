@@ -6,7 +6,7 @@ import { uploadToCloudinary } from "../utils/uploadToCloudinary.js";
 import MessageModel from "../models/message.model.js";
 
 
-export const addToContact = asyncErrorHandler(
+export const toggleContact = asyncErrorHandler(
   async (req: Request, res: Response) => {
     const { targetUserId } = req.body;
     const currentUserId = req.authUser?._id;
@@ -14,12 +14,11 @@ export const addToContact = asyncErrorHandler(
     if (currentUserId === targetUserId) {
       return res.status(400).json({
         success: false,
-        message: "You can't save your own contact.",
+        message: "You can't add yourself as a contact.",
       });
     }
 
     const currentUser = await UserModel.findById(currentUserId);
-    const targetUser = await UserModel.findById(targetUserId);
 
     if (!currentUser) {
       return res.status(404).json({
@@ -28,6 +27,8 @@ export const addToContact = asyncErrorHandler(
       });
     }
 
+    const targetUser = await UserModel.findById(targetUserId);
+
     if (!targetUser) {
       return res.status(404).json({
         success: false,
@@ -35,24 +36,30 @@ export const addToContact = asyncErrorHandler(
       });
     }
 
-    const isContact = currentUser.contacts.includes(targetUserId);
+    const contactIndex = currentUser.contacts.findIndex(
+      (id : string) => id.toString() === targetUserId
+    );
 
-    if (isContact) {
-      return res.status(400).json({
-        success: false,
-        message: "Contact already saved.",
+    if (contactIndex !== -1) {
+      // If found → remove it
+      currentUser.contacts.splice(contactIndex, 1);
+      await currentUser.save();
+      return res.status(200).json({
+        success: true,
+        message: "Contact removed successfully.",
+      });
+    } else {
+      // If not found → add it
+      currentUser.contacts.push(targetUserId);
+      await currentUser.save();
+      return res.status(200).json({
+        success: true,
+        message: "Contact added successfully.",
       });
     }
-
-    currentUser.contacts.push(targetUserId);
-    await currentUser.save();
-
-    return res.status(200).json({
-      success: true,
-      message: "Successfully saved contact.",
-    });
   }
 );
+
 
 export const getUserContacts = asyncErrorHandler(
   async (req: Request, res: Response, next: NextFunction) => {

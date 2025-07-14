@@ -1,12 +1,11 @@
 import express from "express";
 import {
-
-  addToContact,
   deleteUserAccount,
   getUserChats,
   getUserContacts,
   getUserDataById,
   searchUsers,
+  toggleContact,
   updateProfile,
   updateProfileImage,
 } from "../controllers/user.controller.js";
@@ -15,7 +14,7 @@ import { upload } from "../middleware/upload.js";
 
 const userRouter = express.Router();
 
-userRouter.post("/add-to-contact", authMiddleware , addToContact);
+userRouter.post("/toggle-contact", authMiddleware , toggleContact);
 userRouter.get("/contacts/", authMiddleware , getUserContacts);
 userRouter.get("/get-chats" , authMiddleware , getUserChats)
 userRouter.get("/search", authMiddleware, searchUsers);
