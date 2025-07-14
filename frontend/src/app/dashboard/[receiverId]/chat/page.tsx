@@ -308,7 +308,11 @@ export default function ChatWithUser() {
           className="flex-1 bg-transparent border-none outline-none text-base text-white placeholder:text-gray-400 focus:ring-0 focus:outline-none"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSend()}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !isSending) {
+              handleSend();
+            }
+          }}
           placeholder="Type your message..."
           autoFocus
           maxLength={1000}
