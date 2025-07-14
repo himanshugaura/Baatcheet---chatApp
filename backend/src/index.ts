@@ -58,6 +58,10 @@ async function startServer() {
   setupSocket(io);
   app.set("io", io);
 
+  app.get("/health", (req, res) => {
+    res.status(200).send("OK");
+  });
+
 
   // Routes
   app.use("/api/auth", authRouter);
