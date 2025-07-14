@@ -8,13 +8,13 @@ export default function OAuthSuccess() {
   useEffect(() => {
     const token = new URLSearchParams(window.location.search).get("token");
     if (token) {
-      dispatch(setCookie(token)).then((success) => {
+    dispatch(setCookie(token)).then((success) => {
         if (success) {
           window.location.href = "/dashboard";
         }
       });
     }
-  }, []);
+  }, [dispatch]);
 
   return <p>Logging you in...</p>;
 }

@@ -1,5 +1,5 @@
 
-import { addMessage, setMessages, setReceiverOnline } from "@/store/features/chat.slice";
+import {  setMessages } from "@/store/features/chat.slice";
 import { AppDispatch } from "@/store/store";
 import { ChatEndpoints } from "../apis";
 import { apiConnector } from "../apiConnector";
