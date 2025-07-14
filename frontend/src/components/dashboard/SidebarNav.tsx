@@ -55,7 +55,7 @@ export function SidebarNav({ activeTab, onChange }: SidebarNavProps) {
         <Avatar className="w-10 h-10 text-black">
           <AvatarImage src={user?.profileImage?.url } alt={user?.name} 
             referrerPolicy="no-referrer"/>
-          <AvatarFallback>{getInitials(user?.userName || "")}</AvatarFallback>
+          <AvatarFallback>{getInitials(user?.name || "")}</AvatarFallback>
         </Avatar>
         
         <SidebarIconButton

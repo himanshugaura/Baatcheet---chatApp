@@ -17,7 +17,7 @@ export const AuthEndpoints = {
 export const UserEndpoints = {
   GET_CHATS_API: BASE_URL + "/user/get-chats",
   GET_ALL_CONTACTS_API: BASE_URL + "/user/contacts",
-  ADD_TO_CONTACT_API: BASE_URL + "/user/add-to-contact",
+  TOGGLE_CONTACT_API: BASE_URL + "/user/toggle-contact",
   UPDATE_PROFILE_IMAGE_API: BASE_URL + "/user/update-profile-image",
   UPDATE_PROFILE_API: BASE_URL + "/user/update-profile",
   DELETE_ACCOUNT_API: BASE_URL + "/user/delete-account",

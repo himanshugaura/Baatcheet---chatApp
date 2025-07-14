@@ -72,8 +72,8 @@ export default function NewChat() {
                           src={contact.profileImage?.url} 
                           alt={contact.name}
                         />
-                        <AvatarFallback>
-                          {contact.name.charAt(0).toUpperCase()}
+                        <AvatarFallback className="text-black">
+                          {contact.name.charAt(0)}
                         </AvatarFallback>
                       </Avatar>
                       <div className="min-w-0">

@@ -78,20 +78,20 @@ export const searchUser = (query : string) => async (dispatch : AppDispatch) => 
     }
 }
 
-export const addToContact = ( targetUserId : string ) => async (dispatch : AppDispatch) => {
+export const toggleContact = ( targetUserId : string ) => async (dispatch : AppDispatch) => {
     try {
-      const res = await apiConnector("POST", UserEndpoints.ADD_TO_CONTACT_API , {targetUserId});      
+      const res = await apiConnector("POST", UserEndpoints.TOGGLE_CONTACT_API , {targetUserId});      
       
       if (res.success) {
         dispatch(getAllContacts());
         return true;
       } else {
-        toast.error(res.message || "Unable to add to contact");
+        toast.error(res.message || "Unable to toggle contact");
         return false;
       }
     } catch (err) {
       toast.error("Something went wrong");
-      console.error("Add To Contact error:", err);
+      console.error("Toggle Contact error:", err);
       return false;
     }
 }
