@@ -10,51 +10,49 @@ import { Message, User } from "@/types/type";
 import { fetchMessages, sendMessage } from "@/lib/api/chat";
 import { MoveLeft, Reply } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {  getSocket } from "@/lib/socket";
+import { getSocket } from "@/lib/socket";
 import { addMessage } from "@/store/features/chat.slice";
 import { getUserDataById } from "@/lib/api/user";
 import { Button } from "@/components/common/Button";
 import { useMediaQuery } from "@/hooks/use-media-query";
-  
 
 export default function ChatWithUser() {
   const { receiverId } = useParams();
   const receiver = receiverId as string;
-  const user  = useSelector((state: RootState) => state.auth .user) as User;
+  const user = useSelector((state: RootState) => state.auth.user) as User;
   const dispatch = useAppDispatch();
   const [newMessage, setNewMessage] = useState("");
   const [loadingMessages, setLoadingMessages] = useState(true);
-   const [loadingReceiver, setLoadingReceiver] = useState(true);
+  const [loadingReceiver, setLoadingReceiver] = useState(true);
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
   const [isReceiverOnline, setIsReceiverOnline] = useState(false);
   const messageEndRef = useRef<HTMLDivElement>(null);
   const messages: Message[] = useSelector(
     (state: RootState) => state.chat.messages
   );
-  const chatUser  = useSelector(
+  const chatUser = useSelector(
     (state: RootState) => state.user.SelectedContact
   );
   const isDesktop = useMediaQuery("(min-width: 768px)");
-
+  const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
-      const getReceiverData = async () => {
-        await dispatch(getUserDataById(receiver));
-        setLoadingReceiver(false);
-      };
-      getReceiverData();
-    }, [dispatch , receiver]);
-  
+    const getReceiverData = async () => {
+      await dispatch(getUserDataById(receiver));
+      setLoadingReceiver(false);
+    };
+    getReceiverData();
+  }, [dispatch, receiver]);
 
   const msgSendSound = useRef<HTMLAudioElement | null>(null);
   const msgRecSound = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-  msgSendSound.current = new Audio('/audio/msg_send.mp3');
-  msgSendSound.current.preload = 'auto';
-  msgRecSound.current = new Audio('/audio/msg_rec.mp3');
-  msgRecSound.current.preload = 'auto';
-}, []);
+    msgSendSound.current = new Audio("/audio/msg_send.mp3");
+    msgSendSound.current.preload = "auto";
+    msgRecSound.current = new Audio("/audio/msg_rec.mp3");
+    msgRecSound.current.preload = "auto";
+  }, []);
 
   const getRoomId = (id1: string, id2: string): string =>
     [id1, id2].sort().join("_");
@@ -70,98 +68,89 @@ export default function ChatWithUser() {
   }, [dispatch, user, receiver]);
 
   useEffect(() => {
-  const socket = getSocket();
-  if (!socket) return;
+    const socket = getSocket();
+    if (!socket) return;
 
-  const handleUserOnline = (userId: string) => {    
-    if (userId === receiver) setIsReceiverOnline(true);
-  };
+    const handleUserOnline = (userId: string) => {
+      if (userId === receiver) setIsReceiverOnline(true);
+    };
 
-  const handleUserOffline = (userId: string) => {
-    
-    if (userId === receiver) setIsReceiverOnline(false);
-  };
+    const handleUserOffline = (userId: string) => {
+      if (userId === receiver) setIsReceiverOnline(false);
+    };
 
-  socket.on("user-online", handleUserOnline);
-  socket.on("user-offline", handleUserOffline);
+    socket.on("user-online", handleUserOnline);
+    socket.on("user-offline", handleUserOffline);
 
-  return () => {
-    socket.off("user-online", handleUserOnline);
-    socket.off("user-offline", handleUserOffline);
-  };
-}, [user?._id, receiver]);
+    return () => {
+      socket.off("user-online", handleUserOnline);
+      socket.off("user-offline", handleUserOffline);
+    };
+  }, [user?._id, receiver]);
 
   useEffect(() => {
     const socket = getSocket();
     if (!socket) return;
 
     const handleReceiveMessage = (message: Message) => {
-      if(user)
-      {
+      if (user) {
         if (message.roomId === getRoomId(user?._id, receiver)) {
           dispatch(addMessage(message));
-         if (
-  message?.senderId !== user?._id &&
-  msgRecSound.current 
-) {
-  msgRecSound.current.currentTime = 0;
-  msgRecSound.current.play().catch((err) => {
-    console.warn("Receive sound play blocked:", err);
-  });
-}
-
+          if (message?.senderId !== user?._id && msgRecSound.current) {
+            msgRecSound.current.currentTime = 0;
+            msgRecSound.current.play().catch((err) => {
+              console.warn("Receive sound play blocked:", err);
+            });
+          }
         }
-
       }
     };
 
-  socket.on("receive-message", handleReceiveMessage);
+    socket.on("receive-message", handleReceiveMessage);
 
-  return () => {
-    socket.off("receive-message", handleReceiveMessage);
-  };
-}, [dispatch, receiver, user]);
-
-
+    return () => {
+      socket.off("receive-message", handleReceiveMessage);
+    };
+  }, [dispatch, receiver, user]);
 
   // Auto scroll on new message
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  
-
   const handleSend = useCallback(async () => {
-  if (!newMessage.trim() || !user?._id) return;
+    if (!newMessage.trim() || !user?._id) return;
+    setIsSending(true);
+    if (!msgSendSound.current) {
+      msgSendSound.current = new Audio("/audio/msg_send.mp3");
+      msgSendSound.current.preload = "auto";
+    }
 
-  if (!msgSendSound.current) {
-    msgSendSound.current = new Audio('/audio/msg_send.mp3');
-    msgSendSound.current.preload = 'auto';
-  }
+    const roomId = getRoomId(user._id, receiver);
 
-  const roomId = getRoomId(user._id, receiver);
+    const result = await dispatch(
+      sendMessage(
+        user._id,
+        receiver,
+        newMessage,
+        roomId,
+        replyingTo?._id ?? null
+      )
+    );
 
-  const result = await dispatch(
-    sendMessage(
-      user._id,
-      receiver,
-      newMessage,
-      roomId,
-      replyingTo?._id ?? null
-    )
-  );
+    if (result && msgSendSound.current) {
+      msgSendSound.current.currentTime = 0;
+      msgSendSound.current.play().catch((err) => {
+        console.warn("Send sound play blocked:", err);
+      });
+      setIsSending(false);
+    }
 
-  if (result && msgSendSound.current) {
-    msgSendSound.current.currentTime = 0;
-    msgSendSound.current.play().catch((err) => {
-      console.warn("Send sound play blocked:", err);
-    });
-  } 
+    setIsSending(false);
 
-  setNewMessage("");
-  setReplyingTo(null);
-}, [dispatch, newMessage, user?._id, receiver, replyingTo]);
-
+    setNewMessage("");
+    setReplyingTo(null);
+  }, [dispatch, newMessage, user?._id, receiver, replyingTo]);
 
   if (loadingMessages || loadingReceiver) return <Loader />;
 
@@ -170,17 +159,19 @@ export default function ChatWithUser() {
       {/* Header */}
       <div className="flex items-center justify-between mb-4 p-4 bg-gradient-to-br from-[#191c21]/90 to-[#23272f]/80 rounded-2xl shadow-lg border border-[#23272f]">
         <div className="flex items-center gap-4">
-          {!isDesktop &&(<Button
-          size="sm"
-          className="p-2 rounded-4xl"
-          onClickLink="/dashboard">
-           <MoveLeft color="white"/>
-          </Button>
+          {!isDesktop && (
+            <Button
+              size="sm"
+              className="p-2 rounded-4xl"
+              onClickLink="/dashboard"
+            >
+              <MoveLeft color="white" />
+            </Button>
           )}
           <div className="relative">
             <Avatar className="w-12 h-12">
               <AvatarImage
-              referrerPolicy="no-referrer"
+                referrerPolicy="no-referrer"
                 src={chatUser?.profileImage?.url || undefined}
                 alt={chatUser?.name || "User"}
               />
@@ -251,9 +242,7 @@ export default function ChatWithUser() {
 
                   <div
                     className={`text-xs mt-1 ${
-                      isSender
-                        ? "text-blue-300/80"
-                        : "text-gray-400/80"
+                      isSender ? "text-blue-300/80" : "text-gray-400/80"
                     } select-none`}
                   >
                     {new Date(msg.timestamp).toLocaleTimeString([], {
@@ -325,18 +314,25 @@ export default function ChatWithUser() {
           maxLength={1000}
         />
         <button
-          className="ml-2 w-11 h-11 rounded-full bg-gradient-to-tr from-blue-600 to-purple-700 hover:from-blue-700 hover:to-purple-800 flex items-center justify-center shadow-lg transition-all duration-200"
+          className={`ml-2 w-11 h-11 rounded-full bg-gradient-to-tr from-blue-600 to-purple-700 hover:from-blue-700 hover:to-purple-800 flex items-center justify-center shadow-lg transition-all duration-200 ${
+            isSending ? "opacity-70 cursor-not-allowed" : ""
+          }`}
           onClick={handleSend}
-          aria-label="Send"
+          disabled={isSending}
+          aria-label={isSending ? "Sending..." : "Send"}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            viewBox="0 0 20 20"
-            fill="white"
-          >
-            <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-          </svg>
+          {isSending ? (
+            <span className="text-xs text-white">...</span>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              viewBox="0 0 20 20"
+              fill="white"
+            >
+              <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+            </svg>
+          )}
         </button>
       </div>
     </div>
