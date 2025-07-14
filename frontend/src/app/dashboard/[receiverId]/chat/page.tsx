@@ -71,6 +71,25 @@ export default function ChatWithUser() {
     const socket = getSocket();
     if (!socket) return;
 
+    
+    if (user?._id) {
+      socket.emit("get-online-users", user._id);
+    }
+
+        
+    const handleOnlineUsers = (onlineFollowings: string[]) => {
+      console.log(onlineFollowings);
+      
+      if (onlineFollowings.includes(receiver)) {
+        setIsReceiverOnline(true);
+      } else {
+        setIsReceiverOnline(false);
+      }
+    };
+
+    socket.on("online-users", handleOnlineUsers);
+
+    // Existing individual online/offline handlers
     const handleUserOnline = (userId: string) => {
       if (userId === receiver) setIsReceiverOnline(true);
     };
@@ -83,6 +102,7 @@ export default function ChatWithUser() {
     socket.on("user-offline", handleUserOffline);
 
     return () => {
+      socket.off("online-users", handleOnlineUsers);
       socket.off("user-online", handleUserOnline);
       socket.off("user-offline", handleUserOffline);
     };
@@ -113,7 +133,6 @@ export default function ChatWithUser() {
     };
   }, [dispatch, receiver, user]);
 
-  // Auto scroll on new message
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -143,11 +162,9 @@ export default function ChatWithUser() {
       msgSendSound.current.play().catch((err) => {
         console.warn("Send sound play blocked:", err);
       });
-      setIsSending(false);
     }
 
     setIsSending(false);
-
     setNewMessage("");
     setReplyingTo(null);
   }, [dispatch, newMessage, user?._id, receiver, replyingTo]);

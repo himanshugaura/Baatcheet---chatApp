@@ -15,7 +15,6 @@ export function setupSocket(io: Server) {
 
       const count = await pubClient.incr(`online_user_count:${userId}`);
 
-      await pubClient.expire(`online_user_count:${userId}`, 60); 
 
       await pubClient.sAdd(ONLINE_USERS_SET, userId);
 
@@ -30,17 +29,17 @@ export function setupSocket(io: Server) {
       if (!requestingUserId) return;
 
       const user = await UserModel.findById(requestingUserId)
-        .select("following")
+        .select("contacts")
         .lean<IUserLean>();
 
-      const followingIds = user?.following?.map((id) => id.toString()) || [];
+      const conatctIds = user?.contacts?.map((id) => id.toString()) || [];
       const onlineUserIds = await pubClient.sMembers(ONLINE_USERS_SET);
 
-      const onlineFollowings = followingIds.filter((id) =>
+      const onlineContacts = conatctIds.filter((id) =>
         onlineUserIds.includes(id)
       );
 
-      socket.emit("online-users", onlineFollowings);
+      socket.emit("online-users", onlineContacts);
     });
 
     socket.on("disconnect", async () => {

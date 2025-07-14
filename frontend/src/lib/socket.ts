@@ -8,6 +8,7 @@ export const connectSocket = (userId: string) => {
 
     socket.on("connect", () => {
       socket?.emit("join", userId);
+        console.log("Emitting join with:", userId);
     });
   }
 };

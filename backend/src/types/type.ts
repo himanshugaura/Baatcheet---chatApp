@@ -23,7 +23,7 @@ export interface IUser extends Document {
 
 export interface IUserLean {
   _id: Types.ObjectId;
-  following: Types.ObjectId[];
+  contacts: Types.ObjectId[];
 }
 
 
