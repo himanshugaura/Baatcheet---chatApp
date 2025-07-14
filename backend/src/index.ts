@@ -58,11 +58,6 @@ async function startServer() {
   setupSocket(io);
   app.set("io", io);
 
-  // Clean stale Redis keys on start
-  await pubClient.del("online_users");
-  const keys = await pubClient.keys("online_user_count:*");
-  if (keys.length) await pubClient.del(keys);
-  console.log("Redis online user keys cleared");
 
   // Routes
   app.use("/api/auth", authRouter);
