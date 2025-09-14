@@ -280,10 +280,10 @@ export const deleteUserAccount = asyncErrorHandler(
 
 export const searchUsers = asyncErrorHandler(
   async (req: Request, res: Response) => {
-    const query = req.query.query as string;
-    const currentUserId = req.authUser?._id; 
-    
-    if (!query || query.trim().length === 0) {
+    const query = (req.query.query as string)?.trim().toLowerCase();
+    const currentUserId = req.authUser?._id;
+
+    if (!query) {
       return res.status(400).json({
         success: false,
         message: "Query parameter is required.",
@@ -300,16 +300,15 @@ export const searchUsers = asyncErrorHandler(
 
     const excludeIds = [currentUserId, ...currentUser.contacts];
 
+    // Detect if query looks like an email
+    const isEmail = query.includes("@");
+
+    const filter = isEmail
+      ? { email: { $regex: `^${query}$`, $options: "i" } }
+      : { userName: { $regex: `^${query}$`, $options: "i" } };
+
     const users = await UserModel.find({
-      $and: [
-        {
-          $or: [
-            { userName: { $regex: query, $options: "i" } },
-            { email: { $regex: query, $options: "i" } },
-          ],
-        },
-        { _id: { $nin: excludeIds } }, 
-      ],
+      $and: [filter, { _id: { $nin: excludeIds } }],
     }).select("_id userName name email profileImage");
 
     res.status(200).json({
