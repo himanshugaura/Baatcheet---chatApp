@@ -25,7 +25,6 @@ export default function ChatWithUser() {
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [loadingReceiver, setLoadingReceiver] = useState(true);
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
-  const [isReceiverOnline, setIsReceiverOnline] = useState(false);
   const messageEndRef = useRef<HTMLDivElement>(null);
   const messages: Message[] = useSelector(
     (state: RootState) => state.chat.messages
@@ -66,47 +65,6 @@ export default function ChatWithUser() {
     };
     loadData();
   }, [dispatch, user, receiver]);
-
-  useEffect(() => {
-    const socket = getSocket();
-    if (!socket) return;
-
-    
-    if (user?._id) {
-      socket.emit("get-online-users", user._id);
-    }
-
-        
-    const handleOnlineUsers = (onlineFollowings: string[]) => {
-      console.log(onlineFollowings);
-      
-      if (onlineFollowings.includes(receiver)) {
-        setIsReceiverOnline(true);
-      } else {
-        setIsReceiverOnline(false);
-      }
-    };
-
-    socket.on("online-users", handleOnlineUsers);
-
-    // Existing individual online/offline handlers
-    const handleUserOnline = (userId: string) => {
-      if (userId === receiver) setIsReceiverOnline(true);
-    };
-
-    const handleUserOffline = (userId: string) => {
-      if (userId === receiver) setIsReceiverOnline(false);
-    };
-
-    socket.on("user-online", handleUserOnline);
-    socket.on("user-offline", handleUserOffline);
-
-    return () => {
-      socket.off("online-users", handleOnlineUsers);
-      socket.off("user-online", handleUserOnline);
-      socket.off("user-offline", handleUserOffline);
-    };
-  }, [user?._id, receiver]);
 
   useEffect(() => {
     const socket = getSocket();
@@ -194,19 +152,11 @@ export default function ChatWithUser() {
               />
               <AvatarFallback>{chatUser?.name?.charAt(0)}</AvatarFallback>
             </Avatar>
-            <span
-              className={`absolute bottom-1 right-1 w-3.5 h-3.5 rounded-full border-2 ${
-                isReceiverOnline ? "bg-green-400" : "bg-gray-500"
-              }`}
-            />
           </div>
           <div className="ml-4">
             <h2 className="text-xl font-semibold text-gray-100">
               {chatUser?.name}
             </h2>
-            <p className="text-xs text-gray-100">
-              {isReceiverOnline ? "Online" : "Offline"}
-            </p>
           </div>
         </div>
       </div>

@@ -7,7 +7,6 @@ import cors from "cors";
 import { Server } from "socket.io";
 import http from "http";
 import chatRouter from "./routes/chat.routes.js";
-import { connectRedis, pubClient } from "./config/redis.js";
 import passport from "passport";
 import authRouter from "./routes/auth.routes.js";
 import { setupSocket } from "./socket.js";
@@ -26,7 +25,6 @@ async function startServer() {
 
   // DB + Redis
   await dbConnect();
-  await connectRedis();
 
   // Passport only for Google login (stateless)
   app.use(passport.initialize());
